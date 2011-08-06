@@ -1,0 +1,167 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Rascal demo</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='codemirror2/lib/codemirror.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='codemirror2/theme/default.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='codemirror2/theme/night.css') }}">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans|Molengo'">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery.filetree.css') }}">
+    <link rel="stylesheet" type="text/css" href="/static/base.css">
+    <link rel="stylesheet" type="text/css" href="/static/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="/static/jquery-ui-dialog.css">
+
+    <script src="{{ url_for('static', filename='codemirror2/lib/codemirror.js') }}"></script>
+    <script src="{{ url_for('static', filename='codemirror2/mode/css/css.js') }}"></script>
+    <script src="{{ url_for('static', filename='codemirror2/mode/htmlmixed/htmlmixed.js') }}"></script>
+    <script src="{{ url_for('static', filename='codemirror2/mode/javascript/javascript.js') }}"></script>
+    <script src="{{ url_for('static', filename='codemirror2/mode/python/python.js') }}"></script>
+    <script src="{{ url_for('static', filename='codemirror2/mode/xml/xml.js') }}"></script>
+    <script src="http://code.jquery.com/jquery-1.5.js"></script>
+    <script src="{{ url_for('static', filename='jquery.filetree.js') }}"></script>
+    <script src="/static/jquery-ui-1.8.13.min.js"></script>
+</head>
+<body>
+    <div id="topbar">
+        <div class="rascalcontent">
+            <img id="rascallogo" src="{{ url_for('static', filename='rm-logo-words-only-light.png') }}">
+            <ul id="nav">
+                <li>log | </li>
+                <li>config | </li>
+                <li>monitor</li>
+            </ul>
+        </div>
+    </div>
+    <div class="rascalcontent">
+        <input id="reload" value="Reload pytronics" class="large red awesome" alt="Reload pytronics">
+        <textarea id="message-panel" class="cm-s-night">In theory, there will be console messages here.</textarea>
+        <div id="editor">
+            <form method="POST" action="/save">
+                <div id="button-bar">
+                    <input id="save" type="submit" value="Save" class="large red awesome" alt="Save">
+                    <input id="fileurl" type="hidden" name="fileurl" value="{{fileurl}}">
+                    <input id="sourcefile" type="hidden" name="sourcefile" value="{{sourcefile}}">
+                </div>
+                <div id="textfield">
+                    <textarea id="code" cols="100" rows="120" name="text">{{text_to_edit}}</textarea>
+                </div>
+            </form>
+        </div>
+        <div id="ft-background">
+            <div id="filetree" class="cm-s-night"></div>
+        </div>
+        <div id="new-file-folder-bar">
+            <img id="new-file" src="{{ url_for('static', filename='oxygen-new-file-32x32.png') }}">
+            <img id="new-folder" src="{{ url_for('static', filename='oxygen-new-folder-32x32.png') }}">
+        </div>
+        <div id="dialog-form" title="Create new file"> 
+            <p class="validateTips">Funny characters will be stripped out.</p> 
+            <form> 
+                <fieldset> 
+                    <label for="filename">Filename</label> 
+                    <input type="text" name="filename" id="filename" class="text ui-widget-content ui-corner-all" /> 
+                </fieldset> 
+            </form> 
+        </div> 
+    </div>
+    <script type="text/javascript">
+    var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+        mode: "text", // text mode doesn't exist explicitly, but setting it provokes plain text by default
+        tabMode: "shift",
+        indentUnit: "4",
+        enterMode: "keep",
+        electricChars: false,
+        theme: "night"
+    });
+
+    function pickMode(ext) {
+        switch(ext.toLowerCase()) {
+            case "css":
+                return "css";
+            case "js":
+                return "javascript";
+            case "py":
+                return "python";
+            default:
+                return "htmlmixed";
+        }
+    }
+
+    function openFile(path) {
+        $.post('read_contents', {filepath: path}, function(result) {
+            editor.setValue(result);
+            a = path.split(".");
+            ext = a[a.length - 1];
+            editor.setOption('mode', pickMode(ext));
+            $("#sourcefile").val(path);
+        });
+    };
+
+    $(document).ready( function() {
+        $('#filetree').fileTree({ root: '/var/www/public/', script: '/get_dirlist' }, function(path) {
+            openFile(path.split('/var/www/public/')[1]);
+        });
+    });
+
+    $('#reload').bind('click', function(event) {
+        $.post('reload', '', alert('Pytronics reload has begun.'));
+    });
+
+//    $('#new-file').bind('click', function(event) {
+//        $.post('new_file', {name: 'newfile.txt'});
+//    });
+
+    $('#new-folder').bind('click', function(event) {
+        $.post('new_folder', {name: 'newfolder'}, alert('Pytronics reload has begun.'));
+    });
+
+    $(function() {
+        
+        var filename = $( "#filename" );
+        var allFields = $( [] ).add( name );
+        var tips = $( ".validateTips" );
+ 
+        function updateTips( t ) {
+            tips
+                .text( t )
+                .addClass( "ui-state-highlight" );
+            setTimeout(function() {
+                tips.removeClass( "ui-state-highlight", 1500 );
+            }, 500 );
+        }
+        
+        $( "#dialog-form" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Create file": function() {
+                    var bValid = true;
+                    allFields.removeClass( "ui-state-error" );
+ 
+                    if ( bValid ) {
+                        $.post("new_file", {filename: filename.val()});
+                        $( this ).dialog( "close" );
+                    }
+                },
+                Cancel: function() {
+                    $( this ).dialog( "close" );
+                }
+            },
+            close: function() {
+                allFields.val( "" ).removeClass( "ui-state-error" );
+            }
+        });
+ 
+        $( "#new-file" )
+            .button()
+            .click(function() {
+                $( "#dialog-form" ).dialog( "open" );
+        });
+    });
+    </script>
+</body>
+</html>
