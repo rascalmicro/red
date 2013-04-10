@@ -5,8 +5,9 @@ from flask.ext.login import (LoginManager, current_user, login_required,
 from jinja2 import TemplateNotFound
 from werkzeug import secure_filename
 
+ROOT = '/var/www/public/'
+CONFIG_FILE = '/var/www/red/static/editor.conf'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'ico', 'html', 'css', 'js', 'py', 'c'])
-CONFIG_FILE = '/var/www/editor/static/editor.conf'
 
 editor = Flask(__name__)
 
@@ -197,7 +198,7 @@ def secure_path(path): # Version of Werkzeug's secure_filename trimmed to allow 
 @login_required
 def read_contents():
     path = secure_path(request.form['path'])
-    f = open('/var/www/public/' + path, 'r')
+    f = open(ROOT + path, 'r')
     return f.read()
 
 BOILERPLATE = """<!DOCTYPE html>
@@ -273,13 +274,13 @@ def new_template():
     name = secure_path(request.form['templateName'])
     option = request.form['templateOption']
     if option == 'other':
-        path = '/var/www/public/static/' + name
+        path = ROOT + 'static/' + name
     elif option == 'markdown':
-        path = '/var/www/public/templates/docs/' + name
+        path = ROOT + 'templates/docs/' + name
     elif option == 'python':
-        path = '/var/www/public/' + name
+        path = ROOT + name
     else:
-        path = '/var/www/public/templates/' + name
+        path = ROOT + 'templates/' + name
     if os.path.exists(path):
         return 'Conflict', 409
     else:
@@ -301,7 +302,7 @@ def delete_file():
     import subprocess
     fname = request.form['filename']
     print 'Deleting file: ' + fname
-    res = subprocess.call(['rm', '/var/www/public/' + fname])
+    res = subprocess.call(['rm', ROOT + fname])
     if res <> 0:
         return 'Bad Request', 400
     return 'OK', 200
@@ -311,7 +312,7 @@ def delete_file():
 def new_folder():
     import os, subprocess
     name = secure_path(request.form['folderName'])
-    path = '/var/www/public/static/' + name
+    path = ROOT + 'static/' + name
     if os.path.exists(path):
         return 'Conflict', 409
     else:
@@ -326,7 +327,7 @@ def delete_folder():
     import subprocess
     fname = request.form['filename']
     print 'Deleting folder: ' + fname
-    res = subprocess.call(['rm', '-rf', '/var/www/public/' + fname])
+    res = subprocess.call(['rm', '-rf', ROOT + fname])
     if res <> 0:
         return 'Bad Request', 400
     return 'OK', 200
@@ -335,11 +336,10 @@ def delete_folder():
 @editor.route('/editor/save', methods=['POST'])
 @login_required
 def save():
-    root = '/var/www/public/'
     try:
         path = secure_path(request.form['path'])
-        f = open(root + path, 'w')
-        f.write(request.form['text'])
+        f = open(ROOT + path, 'w')
+        f.write(request.form['text'].encode('ascii', 'ignore'))
         f.close()
     except:
         return 'Bad Request', 400
@@ -356,7 +356,6 @@ def xupload_file():
     from werkzeug.exceptions import RequestEntityTooLarge
     if request.method == 'POST':
         try:
-            root = '/var/www/public/'
             # Check file type and folder
             filename = secure_filename(request.headers['X-File-Name'])
             if not allowed_file(filename):
@@ -366,7 +365,7 @@ def xupload_file():
                 folder = request.headers['X-Folder']
             except:
                 folder = ''
-            fpath = os.path.join(root, os.path.join(folder, filename))
+            fpath = os.path.join(ROOT, os.path.join(folder, filename))
             # Write out the stream
             f = file(fpath, 'wb')
             f.write(request.stream.read())
