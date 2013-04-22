@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" type="text/css" href="/editor/static/css/editor.css">
     <link rel="stylesheet" type="text/css" href="/editor/static/css/jquery.filetree.css">
-    
+
     <link rel="stylesheet" type="text/css" href="/editor/static/codemirror/lib/codemirror.css">
     <link rel="stylesheet" type="text/css" href="/editor/static/codemirror/theme/blackboard.css">
     <link rel="stylesheet" type="text/css" href="/editor/static/codemirror/theme/night.css">
@@ -18,6 +18,7 @@
     <link rel="stylesheet/less" type="text/css" href="/editor/static/css/themes-cm.less">
 
     <script src="/editor/static/codemirror/lib/codemirror.js"></script>
+    <script src="/editor/static/codemirror/mode/clike/clike.js"></script>
     <script src="/editor/static/codemirror/mode/css/css.js"></script>
     <script src="/editor/static/codemirror/mode/javascript/javascript.js"></script>
     <script src="/editor/static/codemirror/mode/xml/xml.js"></script>
@@ -26,16 +27,17 @@
     <script src="/editor/static/codemirror/mode/less/less.js"></script>
     <script src="/editor/static/codemirror/mode/markdown/markdown.js"></script>
     <script src="/editor/static/js/log.js"></script>
+    <script src="/editor/static/codemirror/mode/ruby/ruby.js"></script>
 
     <script src="/editor/static/codemirror/lib/util/searchcursor.js"></script>
     <script src="/editor/static/codemirror/lib/util/search.js"></script>
     <link href="/editor/static/codemirror/lib/util/dialog.css" rel="stylesheet">
     <script src="/editor/static/codemirror/lib/util/dialog.js"></script>
-    
+
     {% include "include/editor-scripts.html" %}
     <script src="/editor/static/js/jquery.filetree.js"></script>
-    <script src="/editor/static/js/rascal-1.03.js"></script>
-    
+    <script src="/editor/static/js/rascal-1.04.js"></script>
+
     <style>
         .CodeMirror {
             font-size: 13px;
@@ -47,8 +49,7 @@
         }
 
         .CodeMirror-scroll {
-            /* height: 600px; */
-            height: 475px;
+            /* height: 475px; */
         }
 
         .visibleTabs .cm-tab:after {
@@ -68,7 +69,7 @@
 
 <body>
     {% include "include/editor-topbar.html" %}
-    
+
     <div class="container-fluid">
         <div class="buttons">
             <input id="reload" type="button" value="Reload pytronics" class="btn btn-large btn-danger rascal" alt="Reload pytronics">
@@ -85,22 +86,22 @@
                     <div id="save-bar" class="bar" style="width: 0%;"></div>
                 </div>
             </div>
-            <div id="save-message">Saved file</div> 
+            <div id="save-message">Saved file</div>
         </div>
     </div>
 
     <div class="container-fluid">
-        <div class="row-fluid">    
+        <div class="row-fluid">
             <div class="span3">
-                  <div id="ft-background" class="well rascal rm-well-default">
-                        <div id="filetree" class="filetree-default">&nbsp;</div>
-                  </div><!--/.well -->
-                   <div id="new-file-folder-bar" class="well rascal rm-well-default">
-                        <img id="new-template" src="/editor/static/images/oxygen-new-file-32x32.png" />
-                        <img id="new-folder" src="/editor/static/images/oxygen-new-folder-32x32.png" />
-                        <img id="rename-file" src="/editor/static/images/oxygen-rename-file-32x32.png" />
-                        <img id="preferences" src="/editor/static/images/oxygen-actions-32x32.png" />
-                  </div><!--/.well -->
+                <div id="ft-background" class="well rascal rm-well-default">
+                    <div id="filetree" class="filetree-default">&nbsp;</div>
+                </div><!--/.well -->
+                <div id="new-file-folder-bar" class="well rascal rm-well-default">
+                    <img id="new-template" src="/editor/static/images/oxygen-new-file-32x32.png" title="Create a template or file" />
+                    <img id="new-folder" src="/editor/static/images/oxygen-new-folder-32x32.png" title="Create a folder" />
+                    <img id="rename-file" src="/editor/static/images/oxygen-rename-file-32x32.png" title="Rename or copy a file" />
+                    <img id="preferences" src="/editor/static/images/oxygen-actions-32x32.png" title="Set editor preferences" />
+                </div><!--/.well -->
             </div>
             <div class="span9">
                 <input id="path" type="hidden" name="path" value="{{ path }}">
@@ -176,7 +177,7 @@
     <div id="modal-n" class="modal fade hide rascal">
         <div class="modal-header">
             <button class="close" data-dismiss="modal">×</button>
-            <h3>Rename file</h3>
+            <h3>Rename or copy file</h3>
         </div>
         <div class="modal-body">
             <p id="rename-message">&nbsp;</p>
@@ -184,6 +185,7 @@
         </div>
         <div class="modal-footer">
             <a id="rename-cancel" href="#" class="btn">Cancel</a>
+            <a id="rename-copy" href="#" class="btn btn-warning">Copy</a>
             <a id="rename-yes" href="#" class="btn btn-danger">Rename</a>
         </div>
     </div>
@@ -230,7 +232,7 @@
             <a id="delete-yes" href="#" class="btn btn-danger">Delete</a>
         </div>
     </div>
-    
+
     <div id="modal-p" class="modal fade hide rascal">
         <div class="modal-header">
             <button class="close" data-dismiss="modal">×</button>
@@ -342,23 +344,35 @@
                 dh = (h > (637 + XH)) ? h - (637 + XH) : 0;
                 // console.log('resize ' + dw + ' x ' + dh);
                 $('#filetree').height(455 + dh);
-                $('.CodeMirror-scroll').height(475 + dh);
-                if (rascal.picture.showing) {
-                    $('#frame-p')
-                        .height($('.CodeMirror-scroll').height())
-                        .width($('.CodeMirror-scroll').width());
-                    rascal.picture.resize();
+                if (cmVersion === 2) {
+                    $('.CodeMirror-scroll').height(475 + dh);
+                    if (rascal.picture.showing) {
+                        $('#frame-p')
+                            .height($('.CodeMirror-scroll').height())
+                            .width($('.CodeMirror-scroll').width());
+                        rascal.picture.resize();
+                    }
+                } else {
+                    $('.CodeMirror').height(475 + dh);
+                    if (rascal.picture.showing) {
+                        $('#frame-p')
+                            .height($('.CodeMirror').height())
+                            .width($('.CodeMirror').width());
+                        rascal.picture.resize();
+                    } else {
+                        editor.refresh();
+                    }
                 }
             }
         }
 
         $(document).ready(function () {
             "use strict";
-            initEditor();
+            initEditor('{{root}}', '{{home}}');
             initPreferences();
             adjustGeometry();
             initRascalDnd ();
-            displayTree('/var/www/public/templates/');
+            displayTree(ROOT + 'templates/');
             $(window).resize(function () {
                 delay(function () {
                     adjustGeometry();
@@ -366,6 +380,5 @@
             });
         });
     </script>
-
   </body>
 </html>

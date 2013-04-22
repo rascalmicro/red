@@ -46,7 +46,7 @@
 
     <div class="container-fluid">
         <h2>CodeMirror Tokens</h2>
-        
+
         <p>Choose theme:</p>
         <div class="btn-group" data-toggle="buttons-radio">
             <button id="th-none" class="btn active">None</button>
@@ -225,7 +225,7 @@
             $('#th-' + theme).addClass('active');
             $('body').removeClass().addClass('cm-s-' + theme);
         }
-        
+
         function setEditor (editor) {
             $.post('/editor/set_editor', { editor: editor }, function (response) {
                 console.log('set_editor ' + editor + ': ' + response);
@@ -236,7 +236,7 @@
         $('#th-none').click(function () {
             setTheme('');
         });
-        
+
          $('#th-default').click(function () {
             setTheme('default');
         });
@@ -248,11 +248,11 @@
         $('#th-blackboard').click(function () {
             setTheme('blackboard');
         });
-        
+
         $('#th-solarized-light').click(function () {
             setTheme('solarized-light');
         });
-        
+
         $('#th-solarized-dark').click(function () {
             setTheme('solarized-dark');
         });
