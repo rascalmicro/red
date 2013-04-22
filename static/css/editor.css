@@ -19,7 +19,7 @@
 
 .progress-save {
     float: left;
-    margin-top: 5px; 
+    margin-top: 5px;
     width: 120px;
     padding-right: 5px;
 }
@@ -27,7 +27,7 @@
 .progress-reload {
     float: right;
     width: 160px;
-    margin-top: 5px; 
+    margin-top: 5px;
 }
 
 .progress.rascal {
@@ -64,7 +64,7 @@
 }
 
 .row-fluid [class*="span"] {
-/* 
+/*
   margin-left: 2.127659574%;
   *margin-left: 2.0744680846382977%;
  */
@@ -73,7 +73,7 @@
 }
 
 .row-fluid .span9 {
-/* 
+/*
   width: 74.468085099%;
   *width: 74.4148936096383%;
  */
@@ -130,7 +130,7 @@ a[draggable=true] {
     top: 0;
     left: 0;
     background-color: #828282;
-    border: 3px solid #424242; 
+    border: 3px solid #424242;
     -moz-box-shadow: 0 0 22px #111;
     -webkit-box-shadow: 0 0 22px #111;
     box-shadow: 0 0 22px #111;
@@ -153,4 +153,4 @@ a[draggable=true] {
 .help-inline.rascal {
     font-size: 13px;
 }
-        
+

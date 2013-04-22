@@ -62,7 +62,7 @@ function initEditor() {
 // } else {
 //     wrapModeEl.value = session.getWrapLimitRange().min || "free";
 // }
-// 
+//
 // selectStyleEl.checked = editor.getSelectionStyle() == "line";
 // themeEl.value = editor.getTheme();
 // highlightActiveEl.checked = editor.getHighlightActiveLine();
@@ -85,6 +85,10 @@ function editorSetMode(ext) {
     case 'js':
         Mode = ace.require("ace/mode/javascript").Mode;
         console.log('Mode javascript');
+        break;
+    case 'json':
+        Mode = ace.require("ace/mode/json").Mode;
+        console.log('Mode json');
         break;
     case 'py':
         Mode = ace.require("ace/mode/python").Mode;
@@ -133,7 +137,13 @@ function isReadOnly() {
     return editor.getReadOnly();
 }
 
-function initEditor() {
+function initEditor(root, home) {
+    ROOT = root;
+    HOME = home;
+    console.log('Root: ' + ROOT);
+    console.log('Home: ' + HOME);
+    // The next line fixes a dangerous bug in Firefox Mac 18.0.2
+    $('#path').val('');
     trackChanges(false);
     editor = ace.edit("ace-editor");
     editor.setTheme("ace/theme/textmate");

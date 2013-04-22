@@ -16,7 +16,7 @@ ul.jqueryFileTree > li {
 	white-space: nowrap;
 }
 
-/* 
+/*
 ul.jqueryFileTree > li.directory > a:hover {
     background-color: #414243;
 }
@@ -33,13 +33,13 @@ ul.jqueryFileTree a {
 	padding: 0px 0px 0px 2px;
 }
 
-/* 
+/*
 ul.jqueryFileTree a.selected {
     background-color: #414243;
 }
  */
 
-/* 
+/*
 ul.jqueryFileTree a.dragover {
     background-color: #414243;
 }
@@ -101,6 +101,7 @@ ul.jqueryFileTree img.selected:hover {
 .jqueryFileTree LI.ext_jpg { background: url(/editor/static/images/file-icons/picture.png) left top no-repeat; }
 .jqueryFileTree LI.ext_jpeg { background: url(/editor/static/images/file-icons/picture.png) left top no-repeat; }
 .jqueryFileTree LI.ext_js { background: url(/editor/static/images/file-icons/script.png) left top no-repeat; }
+.jqueryFileTree LI.ext_json { background: url(/editor/static/images/file-icons/json.png) left top no-repeat; }
 .jqueryFileTree LI.ext_lasso { background: url(/editor/static/images/file-icons/code.png) left top no-repeat; }
 .jqueryFileTree LI.ext_less { background: url(/editor/static/images/file-icons/less.png) left top no-repeat; }
 .jqueryFileTree LI.ext_log { background: url(/editor/static/images/file-icons/txt.png) left top no-repeat; }
