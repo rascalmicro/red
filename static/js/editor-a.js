@@ -62,7 +62,7 @@ function initEditor() {
 // } else {
 //     wrapModeEl.value = session.getWrapLimitRange().min || "free";
 // }
-// 
+//
 // selectStyleEl.checked = editor.getSelectionStyle() == "line";
 // themeEl.value = editor.getTheme();
 // highlightActiveEl.checked = editor.getHighlightActiveLine();

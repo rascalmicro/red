@@ -157,7 +157,7 @@ function commentator(cm) {
         commentLine = curMode.commentLine,
         commentStart = curMode.commentStart,
         commentEnd = curMode.commentEnd,
-        jsDocstring = true,
+        jsDocstring = false,
         startText, trimText, cStart,
         currentLine,
         args = {
@@ -211,7 +211,7 @@ function commentator(cm) {
     // console.log('end ' + JSON.stringify(end));
     // console.log(curMode);
      console.log('commentator: ' + name);
-   
+
     // If mode is commentable
     if (commentLine || commentStart) {
         // Ignore javascript JSON mode
@@ -221,13 +221,13 @@ function commentator(cm) {
         }
 
         if (start.line === end.line && start.ch === end.ch) {
-        
+
             // If no selection
             startText = cm.getLine(start.line);
             trimText = startText.trim();
-            
+
             if ((trimText.length === 0) && commentStart) {
-                // If line is empty and multi-line comments available, leave cursor in 
+                // If line is empty and multi-line comments available, leave cursor in
                 // comment (useful for py docstring, maybe for javascript)
                 commentSelection(args.empty);
             } else if (commentStart &&
@@ -235,7 +235,7 @@ function commentator(cm) {
                     (trimText.indexOf(commentEnd, trimText.length - commentEnd.length !== -1))) {
                 // If line is just a multi-line comment, select and uncomment it
                 cStart = startText.indexOf(commentStart, 0);
-                cm.setSelection({line: start.line, ch: cStart}, 
+                cm.setSelection({line: start.line, ch: cStart},
                     {line: start.line, ch: cStart + trimText.length});
                 commentSelection(args.notEmpty);
             } else if (commentLine) {
@@ -246,13 +246,13 @@ function commentator(cm) {
                 cm.setSelection({line: start.line, ch: 0}, {line: start.line, ch: null});
                 commentSelection(args.notEmpty);
             }
-            
+
         } else {
-        
+
             // There is a selection
-            if ((commentLine && (start.ch === 0)) || !commentStart) {           
+            if ((commentLine && (start.ch === 0)) || !commentStart) {
                 // Single-line comments are preferred for selections from start of line
-                if (start.line === end.line && 
+                if (start.line === end.line &&
                     ((name === 'python') || ((name === 'javascript') && jsDocstring))) {
                     // If python or jsDocstring, make single line selection an exception
                     commentSelection(args.notEmpty);

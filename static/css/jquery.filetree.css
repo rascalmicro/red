@@ -16,7 +16,7 @@ ul.jqueryFileTree > li {
 	white-space: nowrap;
 }
 
-/* 
+/*
 ul.jqueryFileTree > li.directory > a:hover {
     background-color: #414243;
 }
@@ -33,13 +33,13 @@ ul.jqueryFileTree a {
 	padding: 0px 0px 0px 2px;
 }
 
-/* 
+/*
 ul.jqueryFileTree a.selected {
     background-color: #414243;
 }
  */
 
-/* 
+/*
 ul.jqueryFileTree a.dragover {
     background-color: #414243;
 }

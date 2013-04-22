@@ -26,7 +26,7 @@
 // 1.00 - released (24 March 2008)
 //
 // TERMS OF USE
-// 
+//
 // This plugin is dual-licensed under the GNU General Public License and the MIT License and
 // is copyright 2008 A Beautiful Site, LLC.
 //
@@ -86,7 +86,7 @@ if (jQuery) {
                         });
                     }
                     function bindTree(t) {
-                        $(t).find('LI A').bind(o.folderEvent, function () {
+                        $(t).find('LI A').bind(o.folderEvent, function (event) {
                             if (o.expandOnce) {
                                 o.expandedPath = '';
                                 o.expandOnce = false;
@@ -107,7 +107,12 @@ if (jQuery) {
                                     $(this).parent().removeClass('expanded').addClass('collapsed');
                                 }
                             } else {
-                                h($(this).attr('rel'));
+                                //console.log("filetree: " + ((event.which === 1) ? "click" : event.which) + ", "
+                                //    + (event.metaKey ? "meta " : "")
+                                //    + (event.ctrlKey ? "ctrl " : "")
+                                //    + (event.altKey ? "alt " : "")
+                                //    + (event.shiftKey ? "shift " : ""));
+                                h($(this).attr('rel'), event.metaKey || event.ctrlKey || event.shiftKey);
                             }
                             return false;
                         });

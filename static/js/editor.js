@@ -453,7 +453,7 @@ function saveMsg(msg) {
         .fadeTo(2000, 0);
 }
 
-// dsmall 12 Apr 2013 - new version of saveFile using rascal.upload 
+// dsmall 12 Apr 2013 - new version of saveFile using rascal.upload
 // depends on rascal-1.04.js
 //  new variable rascal.upload.allowAll (default false)
 //  if allowAll is true, allow any mime type to be uploaded
