@@ -187,14 +187,14 @@ def dirlist(qd): # This function heavily based on Martin Skou's connector script
     s=[]
     try:
         for f in sorted(os.listdir(d), key=unicode.lower):
-            ff=os.path.join(d,f)
-            if os.path.isdir(ff):
-                if (f != '.git'):
+            if not f.startswith('.git'):
+                ff=os.path.join(d,f)
+                if os.path.isdir(ff):
                     r.append('<li class="directory collapsed"><img src="/editor/static/images/file-icons/delete.png"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
-            else:
-                e=os.path.splitext(f)[1][1:] # get .ext and remove dot
-                if (e not in noneditable and f != '__init__.py'):
-                    s.append('<li class="file ext_%s"><img src="/editor/static/images/file-icons/delete.png" rel="%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,ff,f))
+                else:
+                    e=os.path.splitext(f)[1][1:] # get .ext and remove dot
+                    if (e not in noneditable and f != '__init__.py'):
+                        s.append('<li class="file ext_%s"><img src="/editor/static/images/file-icons/delete.png" rel="%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,ff,f))
         r += s
     except Exception,e:
         r.append('Could not load directory: %s' % str(e))
