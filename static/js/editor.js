@@ -1,15 +1,15 @@
 // Editor (CodeMirror and ACE)
-// JSLint 8 Oct 2012 jQuery $ rascal setPictureFrameSize DEBUG_ON_MAC editorSetText saveFile
+// JSLint 8 Oct 2012 jQuery $ rascal setPictureFrameSize editorSetText saveFile
 // saveMsg editorGetText savePreferences initPreferences defaultPreferences
 
-// Set up globals
-var ROOT = '/var/www/public/';
-var IMAGE_EXTENSIONS = [ 'png', 'jpg', 'jpeg', 'gif', 'ico' ];
-var EXCEPTIONS = ['/var/www/public/server.py',
-        '/var/www/public/static/', '/var/www/public/templates/'];
-var DEFAULT_PICTURE = 'static/images/picture_help.png';
+// Editor globals (see also InitEditor and initPreferences)
+var ROOT;
+var HOME;
 var editor;
 var preferences = { };
+var IMAGE_EXTENSIONS = [ 'png', 'jpg', 'jpeg', 'gif', 'ico' ];
+var EXCEPTIONS = [ROOT + 'server.py', ROOT + 'static/', ROOT + 'templates/'];
+var DEFAULT_PICTURE = 'static/images/picture_help.png';
 
 // bFileChanged is set by typing in editor window
 // When a new file is clicked in fileTree and bFileChanged for the existing file is true,
@@ -83,13 +83,12 @@ function showPicture(path) {
             .fadeTo('fast', 1);
     }
     // Set up picture
-    if (DEBUG_ON_MAC) {
-        rp.imgRoot = 'http://localhost:5000/';
-    }
+    rp.imgRoot = HOME;
     rp.container = 'frame-p';
     rp.caption = 'location-bar';
     rp.show(fpath);
     $('#path').val(fpath);
+    $(document).attr('title', 'Edit - ' + fpath.split('/').pop());
 }
 
 function hidePicture() {
@@ -100,21 +99,27 @@ function hidePicture() {
     }
 }
 
+// Matches 'templates/' at the start of fpath (after root removed)
+function pathToUrl(fpath) {
+    var apath;
+    if (fpath.match(/^templates\//)) {
+        apath = HOME + fpath.split('templates/').pop();
+    }
+    return apath;
+}
+
 // Clears file change indicator, saves path
 function displayLocation(path) {
     "use strict";
     var fpath = path.split(ROOT).pop(),
-        apath = '#';
-    if (fpath.match(/templates\//)) {
-        apath = fpath.split('templates').pop();
-        if (DEBUG_ON_MAC) {
-            apath = 'http://localhost:5000' + apath;
-        }
+        apath;
+    if (apath = pathToUrl(fpath)) {
         $('#location-bar').html('<a href="' + apath + '">' + fpath + '</a>');
     } else {
         $('#location-bar').text(fpath);
     }
     $('#path').val(fpath);
+    $(document).attr('title', 'Edit - ' + fpath.split('/').pop());
 }
 
 function clearLocation() {
@@ -126,13 +131,16 @@ function clearLocation() {
 // Load a new picture or file. For files, change tracking is resumed
 function loadFile(path, scroll, cursor) {
     "use strict";
-    var ext = path.split('.').pop().toLowerCase();
+    var
+        ext = path.split('.').pop().toLowerCase(),
+        fpath = path.split(ROOT).pop();
     trackChanges(false);
     if ($.inArray(ext, IMAGE_EXTENSIONS) >= 0) {
         showPicture(path);  // NB Updates location and path
     } else {
         hidePicture();
-        $.post('/editor/read', 'path=' + path.split(ROOT).pop(), function (response) {
+        $.post('/editor/read', 'path=' + fpath, function (response) {
+            console.log('Loading ' + fpath + ' (' + response.length + ')');
             editorSetText(response, ext);
             if (scroll !== undefined) {
                 editor.scrollTo(scroll.x, scroll.y);
@@ -143,6 +151,10 @@ function loadFile(path, scroll, cursor) {
             }
             displayLocation(path);
             trackChanges(true);
+        })
+        .error (function (jqXHR, textStatus, errorThrown) {
+            console.log('loadFile: ' + textStatus + ': ' + errorThrown);
+            saveMsg('Load file failed (' + errorThrown + ')');
         });
     }
 }
@@ -204,16 +216,17 @@ function displayTree(path) {
         expandedPath: path,
         expandOnce: true,
         extendBindTree: rascal.dnd.bindTree
-    }, function (path) {
-        // If already loaded do nothing
-        // console.log('New path ' + path.split(ROOT).pop());
-        // console.log('Old path ' + $('#path').val());
-        // if (path.split(ROOT).pop() !== $('#path').val()) {
-        if (!bFileChanged) {
+    }, function (path, meta) {
+        var fpath = path.split(ROOT).pop(),
+            apath;
+        // console.log('file click meta ' + meta);
+        if (meta && (apath = pathToUrl(fpath))) {
+            window.open(apath, '_blank');
+        } else if (!bFileChanged) {
             loadFile(path);
         } else {
             var which;
-            if (path.split(ROOT).pop() !== $('#path').val()) {
+            if (fpath !== $('#path').val()) {
                 which = SAVE;
             } else {
                 which = REVERT;
@@ -224,7 +237,6 @@ function displayTree(path) {
                 }
             });
         }
-        // }
     });
 }
 
@@ -367,10 +379,11 @@ $('li.directory.collapsed a.selected').live('mouseenter mouseleave', function (e
 //  moveItem /var/www/public/templates/foo.html /var/www/public/static/
 //  moveItem /var/www/public/static/empty/ /var/www/public/templates/
 //  moveItem /var/www/public/templates/foo.html /var/www/public/templates/bar.html
-function moveItem(src, dst) {
+function moveItem(src, dst, copy) {
     "use strict";
+    copy = copy || false;
     console.log('moveItem ' + src + ' ' + dst);
-    $.post('/editor/move_item', { src: src, dst: dst }, function (response) {
+    $.post('/editor/move_item', { src: src, dst: dst, copy: copy.toString() }, function (response) {
         var srcDirs = (src.match(/.*\//)[0]).split('/'),
             dstDirs = (dst.match(/.*\//)[0]).split('/'),
             dstDir = dstDirs.join('/'),
@@ -425,12 +438,14 @@ function moveItem(src, dst) {
 function saveProgress(pc) {
     "use strict";
     console.log('progress ' + pc);
-    $('#save-bar').css('width', (100 - pc) + '%');
+    $('#save-bar').css('width', pc + '%');
 }
 
 function saveMsg(msg) {
     "use strict";
     $('#save-message').text(msg)
+        .stop(true)
+        .css('color', '')
         .css('visibility', 'visible')
         .hide()
         .fadeTo(500, 1)
@@ -438,11 +453,64 @@ function saveMsg(msg) {
         .fadeTo(2000, 0);
 }
 
+// dsmall 12 Apr 2013 - new version of saveFile using rascal.upload 
+// depends on rascal-1.04.js
+//  new variable rascal.upload.allowAll (default false)
+//  if allowAll is true, allow any mime type to be uploaded
+//  send allowAll in new xhr header 'X-AllowAll'
+// depends on editor.py
+//  in procedure xupload_file() obtain value of allowAll
+//  if allowAll is true, allow any file extension to be saved
+
+function saveStatus(msg) {
+    "use strict";
+    console.log('saveStatus: ' + msg);
+    $('#save-message').text(msg)
+        .stop(true)
+        .css('color', 'red')
+        .css('visibility', 'visible')
+        .hide()
+        .fadeTo(500, 1)
+}
+
+function saveComplete(directory) {
+    "use strict";
+    $('#save-progress')
+        .removeClass('active')
+        .removeClass('progress-striped');
+    displayLocation($('#path').val());
+    bFileChanged = false;
+    unhighlightChanged();
+    if (querySave.status === 2) {
+        querySave.status = 1;
+    }
+    saveMsg('Saved file');
+}
+
+function saveInit(files, dst) {
+    "use strict";
+    var ru = rascal.upload;
+    // set up postUrl, allowed types, progress, status and complete
+    ru.postUrl = '/editor/xupload';
+    ru.allowAll = true;
+    ru.progress = saveProgress;
+    $('#save-bar').css('width', '0%');
+    $('#save-progress')
+        .addClass('progress-striped')
+        .addClass('active');
+    ru.status = saveStatus;
+    ru.complete = saveComplete;
+    ru.filesDropped(files, dst);
+}
+
 function saveFile() {
     "use strict";
     var p = $('#path').val(),
-        s = editorGetText();
-    $('#save-bar').css('width', '0%');
+        s = editorGetText(),
+        files,
+        blob,
+        f,
+        dst;
     if (rascal.picture.showing) {
         saveMsg('Can\'t save pictures');
     } else if (isReadOnly()) {
@@ -450,27 +518,14 @@ function saveFile() {
     } else if (p === '') {
         saveMsg('Nothing to save');
     } else {
-        console.log('saveFile: saving ' + p);
-        $.post('/editor/save', { path: p, text: s }, function (response) {
-            console.log('saveFile: ' + response);
-            displayLocation($('#path').val());
-            bFileChanged = false;
-            unhighlightChanged();
-            if (querySave.status === 2) {
-                querySave.status = 1;
-            }
-        }).error(function (jqXHR, textStatus, errorThrown) {
-            console.log('saveFile: ' + textStatus + ': ' + errorThrown);
-        });
-        $('#save-progress')
-            .addClass('progress-striped')
-            .addClass('active');
-        $('#save-bar').animate({ 'width': '100%' }, 1000, function () {
-            $('#save-progress')
-                .removeClass('active')
-                .removeClass('progress-striped');
-            saveMsg('Saved file');
-        });
+        console.log('Saving ' + p + ' (' + s.length + ')');
+        f = p.split('/').pop();
+        dst = p.replace(f, '');
+        blob = new Blob([s], {type: 'text'});
+        blob['name'] = f;
+        files = { 0: blob, length: 1};
+        console.log(files);
+        saveInit(files, dst);
     }
 }
 
@@ -483,7 +538,7 @@ $.ctrl = function (key, callback, args) {
             args = [];  // IE barks when args is null
         }
         // if (e.keyCode === key.charCodeAt(0) && e.ctrlKey) {
-        if (e.keyCode === key.charCodeAt(0) && e.metaKey) {
+        if (e.keyCode === key.charCodeAt(0) && (e.ctrlKey || e.metaKey)) {
             callback.apply(this, args);
             return false;
         }
@@ -532,6 +587,7 @@ function uploadInit(files, dst) {
     var ru = rascal.upload;
     // set up postUrl, allowed types, progress, status and complete
     ru.postUrl = '/editor/xupload';
+    ru.allowAll = false;
     ru.allowedTypes = [ 'image/', 'text/html', 'text/css', 'text/javascript',
         'application/x-javascript', 'text/x-python-script' ];
     ru.progress = saveProgress;
@@ -647,16 +703,16 @@ $('#template-create').click(function () {
             switch (templateOption) {
             case 'html':
             case 'doctab':
-                path = '/var/www/public/templates/';
+                path = ROOT + 'templates/';
                 break;
             case 'markdown':
-                path = '/var/www/public/templates/docs/';
+                path = ROOT + 'templates/docs/';
                 break;
             case 'python':
-                path = '/var/www/public/';
+                path = ROOT;
                 break;
             default:
-                path = '/var/www/public/static/';
+                path = ROOT + 'static/';
             }
             console.log('new_template: ' + path);
             displayTree(path);
@@ -711,7 +767,7 @@ $('#folder-create').click(function () {
     if (folderName !== '') {
         $.post('/editor/new_folder', { folderName: folderName }, function (response) {
             console.log(response);
-            displayTree('/var/www/public/static/');
+            displayTree(ROOT + 'static/');
             $('#modal-f').modal('hide');
         }).error(function (jqXHR, textStatus, errorThrown) {
             console.log('new_folder: ' + textStatus + ': ' + errorThrown);
@@ -739,7 +795,7 @@ $('#rename-file').click(function () {
     var fpath = $('#path').val(),
         filename;
     if (fpath === '') {
-        saveMsg('Select a file to rename');
+        saveMsg('Select a file to rename or copy');
     } else if ($.inArray(ROOT + fpath, EXCEPTIONS) !== -1) {
         saveMsg('This file cannot be renamed');
     } else {
@@ -756,7 +812,7 @@ $('#modal-n').on('shown', function () {
     $('#rename-name').focus();
 });
 
-$('#rename-yes').click(function () {
+function renameOrCopy (copy) {
     "use strict";
     console.log($('#path').val());
     var fpath = $('#path').val(),
@@ -778,8 +834,18 @@ $('#rename-yes').click(function () {
         $('#rename-name').focus();
     } else {
         $('#modal-n').modal('hide');
-        moveItem(ROOT + fpath, ROOT + srcDirs + newName);
+        moveItem(ROOT + fpath, ROOT + srcDirs + newName, copy);
     }
+}
+
+$('#rename-yes').click(function () {
+    "use strict";
+    renameOrCopy(false);
+});
+
+$('#rename-copy').click(function () {
+    "use strict";
+    renameOrCopy(true);
 });
 
 $('#rename-cancel').click(function () {
