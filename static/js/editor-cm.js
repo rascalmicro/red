@@ -5,7 +5,7 @@
 
 var prefs = {
     defaults: {
-        theme: 'blackboard',
+        theme: 'night',
         fontSize: 12,
         lineHeight: 1.4,
         tabSize: 4,
@@ -14,7 +14,7 @@ var prefs = {
         indentUnit: 4,
         lineNumbers: false,
         highlightActive: true,
-        lineWrapping: false,
+        lineWrapping: true,
         matchBrackets: false
     },
     types: {
