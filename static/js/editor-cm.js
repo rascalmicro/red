@@ -379,12 +379,14 @@ function editorSetMode(ext) {
         mode = 'python';
         break;
     case 'html':
+    case 'mako':
     case 'xml':
         mode = 'htmlmixed';
         break;
     case 'less':
         mode = 'less';
         break;
+    case 'markdown':
     case 'md':
         mode = 'markdown';
         break;
