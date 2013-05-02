@@ -157,7 +157,7 @@ function saveFile() {
     } else if (editorIsReadOnly()) {
         saveMsg('File is read only');
     } else if (p === '') {
-        saveMsg('Nothing to save');
+        saveMsg(DEFAULT_TEXT);
     } else {
         console.log('Saving ' + p + ' (' + s.length + ')');
         f = p.split('/').pop();

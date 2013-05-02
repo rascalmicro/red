@@ -46,7 +46,7 @@ function uploadInit(files, dst) {
         .addClass('active');
     ru.status = uploadStatus;
     ru.complete = uploadComplete;
-    addAnonymousTab('upload status');
+    anonymousTab('upload status');
     editorSetText('', 'log');
     console.log('Start readOnly ' + editorIsReadOnly());
     ru.filesDropped(files, dst.split(ROOT).pop());

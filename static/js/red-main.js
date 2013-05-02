@@ -178,18 +178,13 @@ function closeFile() {
 // Reload pytronics
 // Assumes there is a folder static/log/ and
 // a symlink static/log/public.log to /var/log/uwsgi/public.log
-function doReload() {
+$('#reload').click(function () {
     "use strict";
-    var savedPath = $('#path').val(),
-        savedText = (savedPath === '') ? editorGetText() : undefined,
-        savedCursor = editor.getCursor(),
-        savedScroll = editor.getScrollInfo();
     $('#reload-bar').css('width', '0%');
     $.post('/editor/reload', function (response) {
-        trackChanges(false);
-        clearLocation();
         hidePicture();
-        editorSetText('Pytronics is reloading. Please wait...');
+        anonymousTab('reload status');
+        editorSetText('Pytronics is reloading. Please wait...', 'log');
         // Wait 15 sec
         $('#reload-progress')
             .addClass('progress-striped')
@@ -201,13 +196,9 @@ function doReload() {
             // Check if succeeded, if not show log
             $.post('/datetime', function (response) {
                 saveMsg('Reloaded pytronics');
-                if (savedPath !== '') {
-                    loadFile(savedPath, savedScroll, savedCursor);
-                } else {
-                    editorSetText(savedText);
-                }
+                closeTab();
             }).error(function (jqXHR, textStatus, errorThrown) {
-                saveMsg('Reload pytronics failed - see log');
+                saveMsg('Reload failed - see log');
                 loadFile(ROOT + 'static/log/public.log');
             });
         });
@@ -215,17 +206,4 @@ function doReload() {
         console.log('reload: ' + textStatus + ': ' + errorThrown);
         saveMsg('Reload pytronics failed');
     });
-}
-
-$('#reload').click(function () {
-    "use strict";
-    if (!bFileChanged) {
-        doReload();
-    } else {
-        querySave.init(QS_SAVE, function (status) {
-            if (status === 1) {
-                doReload();
-            }
-        });
-    }
 });

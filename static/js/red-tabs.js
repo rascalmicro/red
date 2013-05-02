@@ -111,7 +111,7 @@ function closeTab() {
     if (replacement.length === 0) {
         replacement = candidate.next();
         if (replacement.length === 0) {
-            addAnonymousTab();
+            addTab('');
             replacement = candidate.next();
         }
     }
@@ -120,9 +120,14 @@ function closeTab() {
     candidate.remove();
 }
 
-// Name is optional - see addTab
-function addAnonymousTab(name) {
-    return addTab('', name);
+// Reuse or add an anonymous tab for messages
+function anonymousTab(name) {
+    if (tab = getTabFromPath('')) {
+        $('#editortabs a[rel="' + tab + '"]').tab('show');
+    } else {
+        tab = addTab('');
+    }
+    $('#editortabs a[rel="' + tab + '"]').text(name);
 }
 
 function getTabFromPath(fpath) {
@@ -164,8 +169,8 @@ function switchToTab(fpath) {
 
 /* PRIVATE */
 // Create tab for file fpath
-// If fpath is the empty string, it creates an anonymous tab with optional name
-function addTab(fpath, name) {
+// If fpath is the empty string, it creates an anonymous tab
+function addTab(fpath) {
     var nextTab = $('li.filetab:last').clone(),
         lastID = nextTab.children('a').attr('rel'),
         nextID = 'tab-' + (parseInt(lastID.split('-').pop(), 10) + 1).toString(),
@@ -178,8 +183,7 @@ function addTab(fpath, name) {
     nextTab.children('a')
         .attr('rel', nextID)
         .attr('title', fpath)
-        .text((name) ? name : (fname !== '') ? fname : nextID.replace('tab', 'untitled'));
-//         .on('shown', function (e) { tabShown(e); });
+        .text((fname !== '') ? fname : nextID.replace('tab', 'untitled'));
     $('#editortabs').append(nextTab);
     $('#editortabs a:last').tab('show');
     return nextID;
@@ -197,6 +201,7 @@ function tabShown(e) {
     if (!currInst.doc) {
         currInst.doc = CodeMirror.Doc(DEFAULT_TEXT);
     }
+    hidePicture();
     // Disable highlight active line across swap
     editor.setOption('styleActiveLine', false);
     prevInst.bReadOnly = editorIsReadOnly();
