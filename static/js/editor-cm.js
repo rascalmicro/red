@@ -1,4 +1,4 @@
-// Support for CodeMirror2
+// Support for CodeMirror
 // JSLint 8 Oct 2012 jQuery $ applyTheme applyFontSize applyLineHeight applyTabSize
 // applySoftTabs applyVisibleTabs applyIndentUnit applyLineNumbers applyHighlightActive
 // applyLineWrapping applyMatchBrackets CodeMirror editor trackChanges fileChanged preferences
@@ -62,7 +62,7 @@ var hlLineStyle = "activeline-default";
 function activeline() {
     if (hlActive) {
         if (hlLine !== null) {
-            if (cmVersion === 2) {
+            if (cmVersion < 3.0) {
                 editor.setLineClass(hlLine, null, null);
             } else {
                 editor.removeLineClass(hlLine, null, hlLineStyle);
@@ -70,7 +70,7 @@ function activeline() {
         } else {
             console.log('WARNING activeline: hlLine is null');
         }
-        if (cmVersion === 2) {
+        if (cmVersion < 3.0) {
             hlLine = editor.setLineClass(editor.getCursor().line, null, hlLineStyle);
         } else {
             hlLine = editor.addLineClass(editor.getCursor().line, null, hlLineStyle);
@@ -297,8 +297,9 @@ function initEditor(root, home) {
             "Tab": softTabs,
             "Cmd-J": formatJSON,
             "Ctrl-J": formatJSON,
-            "Cmd-/": commentator
-        }
+            "Cmd-/": commentator,
+            "Ctrl-/": commentator
+       }
 //        onCursorActivity: activeline
 //        electricChars: false,
 //        onChange: fileChanged
@@ -306,12 +307,12 @@ function initEditor(root, home) {
     initCommentator();
     if (CodeMirror.version !== undefined) {
         console.log('CodeMirror version: ' + CodeMirror.version);
-        cmVersion = parseInt(CodeMirror.version, 10);
+        cmVersion = parseFloat(CodeMirror.version);
     } else {
         console.log('CodeMirror version: v2.33 or earlier');
-        cmVersion = 2;
+        cmVersion = 2.0;
     }
-    if (cmVersion === 2) {
+    if (cmVersion < 3.0) {
         $('.CodeMirror-scroll').height(475);
         editor.setOption('fixedGutter', true);
         editor.setOption('onCursorActivity', activeline);
@@ -320,6 +321,20 @@ function initEditor(root, home) {
         $('.CodeMirror').height(475);
         editor.on('cursorActivity', activeline);
         editor.on('change', fileChanged);
+    }
+    // Load support for search
+    if (cmVersion <= 3.0) {
+        $.getScript('/editor/static/codemirror/lib/util/searchcursor.js');
+        $.getScript('/editor/static/codemirror/lib/util/search.js');
+        $('head').append( $('<link rel="stylesheet" type="text/css" />')
+            .attr('href', '/editor/static/codemirror/lib/util/dialog.css') );
+        $.getScript('/editor/static/codemirror/lib/util/dialog.js');
+    } else {
+        $.getScript('/editor/static/codemirror/addon/search/searchcursor.js');
+        $.getScript('/editor/static/codemirror/addon/search/search.js');
+        $('head').append( $('<link rel="stylesheet" type="text/css" />')
+            .attr('href', '/editor/static/codemirror/addon/dialog/dialog.css') );
+        $.getScript('/editor/static/codemirror/addon/dialog/dialog.js');
     }
 }
 
@@ -535,7 +550,7 @@ function applyHighlightActive() {
         hlActive = preferences.highlightActive;
         if (hlActive) {
             // console.log('+ turning on hlActive');
-            if (cmVersion === 2) {
+            if (cmVersion < 3.0) {
                 hlLine = editor.setLineClass(editor.getCursor().line, null, hlLineStyle);
             } else {
                 hlLine = editor.addLineClass(editor.getCursor().line, null, hlLineStyle);
@@ -544,7 +559,7 @@ function applyHighlightActive() {
             // console.log('+ turning off hlActive');
             // Clear current highlight
             if (hlLine !== null) {
-                if (cmVersion === 2) {
+                if (cmVersion < 3.0) {
                     editor.setLineClass(hlLine, null, null);
                 } else {
                     editor.removeLineClass(hlLine, null, null);
@@ -565,11 +580,18 @@ function applyLineWrapping() {
 function applyMatchBrackets() {
     "use strict";
     // console.log('applyMatchBrackets ' + preferences.matchBrackets);
-    if ((cmVersion !== 2) && (editor.getOption('matchBrackets') === undefined)) {
-        console.log('CM version 3: loading matchbrackets.js');
-        $.getScript('/editor/static/codemirror/lib/util/matchbrackets.js', function () {
-            editor.setOption('matchBrackets', preferences.matchBrackets);
-        });
+    if ((cmVersion >= 3.0) && (editor.getOption('matchBrackets') === undefined)) {
+        if (cmVersion === 3.0) {
+            console.log('CM version 3: loading matchbrackets.js');
+            $.getScript('/editor/static/codemirror/lib/util/matchbrackets.js', function () {
+                editor.setOption('matchBrackets', preferences.matchBrackets);
+            });
+        } else {
+            console.log('CM version 3.1+: loading matchbrackets.js');
+            $.getScript('/editor/static/codemirror/addon/edit/matchbrackets.js', function () {
+                editor.setOption('matchBrackets', preferences.matchBrackets);
+            });
+        }
     } else {
         editor.setOption('matchBrackets', preferences.matchBrackets);
     }

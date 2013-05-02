@@ -29,10 +29,19 @@
     <script src="/editor/static/js/log.js"></script>
     <script src="/editor/static/codemirror/mode/ruby/ruby.js"></script>
 
+    <!-- These files are now loaded automatically in editor-cm.js -->
+    <!-- Search support for CM versions up to v3.0
     <script src="/editor/static/codemirror/lib/util/searchcursor.js"></script>
     <script src="/editor/static/codemirror/lib/util/search.js"></script>
     <link href="/editor/static/codemirror/lib/util/dialog.css" rel="stylesheet">
     <script src="/editor/static/codemirror/lib/util/dialog.js"></script>
+    -->
+    <!-- Search support for CM versions from v3.01
+    <script src="/editor/static/codemirror/addon/search/searchcursor.js"></script>
+    <script src="/editor/static/codemirror/addon/search/search.js"></script>
+    <link href="/editor/static/codemirror/addon/dialog/dialog.css" rel="stylesheet">
+    <script src="/editor/static/codemirror/addon/dialog/dialog.js"></script>
+    -->
 
     {% include "include/editor-scripts.html" %}
     <script src="/editor/static/js/jquery.filetree.js"></script>
@@ -184,8 +193,8 @@
             <input id="rename-name" type="text" name="rename-name" />
         </div>
         <div class="modal-footer">
-            <a id="rename-cancel" href="#" class="btn">Cancel</a>
             <a id="rename-copy" href="#" class="btn btn-warning">Copy</a>
+            <a id="rename-cancel" href="#" class="btn">Cancel</a>
             <a id="rename-yes" href="#" class="btn btn-danger">Rename</a>
         </div>
     </div>
