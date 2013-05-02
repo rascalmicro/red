@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <!-- CodeMirror editor -->
-<!-- dsmall 27 Apr 2013 This version requires CodeMirror v3.1 or later -->
 <!-- JSLint 8 Oct 2012 -->
 <html lang="en">
 <head>
     <title>Editor</title>
     {% include "include/editor-head.html" %}
 
-    <link rel="stylesheet" type="text/css" href="/editor/static/css/red.css">
+    <link rel="stylesheet" type="text/css" href="/editor/static/css/editor.css">
     <link rel="stylesheet" type="text/css" href="/editor/static/css/jquery.filetree.css">
 
     <link rel="stylesheet" type="text/css" href="/editor/static/codemirror/lib/codemirror.css">
@@ -30,13 +29,19 @@
     <script src="/editor/static/js/log.js"></script>
     <script src="/editor/static/codemirror/mode/ruby/ruby.js"></script>
 
-    <!-- Search and match brackets support for CM versions from v3.01 -->
+    <!-- These files are now loaded automatically in editor-cm.js -->
+    <!-- Search support for CM versions up to v3.0
+    <script src="/editor/static/codemirror/lib/util/searchcursor.js"></script>
+    <script src="/editor/static/codemirror/lib/util/search.js"></script>
+    <link href="/editor/static/codemirror/lib/util/dialog.css" rel="stylesheet">
+    <script src="/editor/static/codemirror/lib/util/dialog.js"></script>
+    -->
+    <!-- Search support for CM versions from v3.01
     <script src="/editor/static/codemirror/addon/search/searchcursor.js"></script>
     <script src="/editor/static/codemirror/addon/search/search.js"></script>
     <link href="/editor/static/codemirror/addon/dialog/dialog.css" rel="stylesheet">
     <script src="/editor/static/codemirror/addon/dialog/dialog.js"></script>
-    <script src="/editor/static/codemirror/addon/edit/matchbrackets.js"></script>
-    <script src="/editor/static/codemirror/addon/selection/active-line.js"></script>
+    -->
 
     {% include "include/editor-scripts.html" %}
     <script src="/editor/static/js/jquery.filetree.js"></script>
@@ -46,17 +51,16 @@
         .CodeMirror {
             font-size: 13px;
             line-height: 1.2em;
-            border: 6px solid #444;
-            border-radius: 4px;
+            border: 3px solid #424242;
             -moz-box-shadow: 0 0 3px #3A3A3A;
             -webkit-box-shadow: 0 0 3px #3A3A3A;
             box-shadow: 0 0 3px #3A3A3A;
-            height: 475px;
+        }
 
+        .CodeMirror-scroll {
+            /* height: 475px; */
         }
-        .CodeMirror-activeline-background {
-            background-color: #e8f2ff !important;
-        }
+
         .visibleTabs .cm-tab:after {
             content: "\21e5";
             display: -moz-inline-block;
@@ -75,65 +79,6 @@
 <body>
     {% include "include/editor-topbar.html" %}
 
-    <!-- <div class="container-fluid" style="margin-bottom: -2px;"> -->
-    <div class="container-fluid">
-        <div class="row-fluid">
-            <div class="span3">
-                <table border="0" cellspacing="0" cellpadding="0" width="100%">
-                    <tr>
-                        <td>
-                            <div class="buttons">
-                                <input id="save" type="button" value="Save" class="btn btn-large btn-danger rascal" alt="Save">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        <!-- <div class="progress-bars"> -->
-                            <div class="progress-save">
-                                <div id="save-progress" class="progress progress-danger rascal">
-                                    <div id="save-bar" class="bar" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                            <div id="save-message">Saved file</div>
-                        <!-- </div> -->
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="span9">
-                <table border="0" cellspacing="0" cellpadding="0" width="100%">
-                    <tr>
-                        <td rowspan="2" valign="bottom">
-                            <ul id="editortabs" class="nav nav-tabs">
-                                <li class="filetab active">
-                                    <img src="/editor/static/images/file-icons/delete.png" />
-                                    <a href="#" rel="tab-1" data-toggle="tab" title="">untitled-1</a>
-                                </li>
-                           </ul>
-                        </td>
-                        <td width="160">
-                            <div class="buttons">
-                                <input id="reload" type="button" value="Reload pytronics" class="btn btn-large btn-danger rascal" alt="Reload pytronics">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        <!-- <div class="progress-bars"> -->
-                            <div class="progress-reload">
-                                <div id="reload-progress" class="progress progress-danger rascal">
-                                    <div id="reload-bar" class="bar" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        <!-- </div> -->
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div> <!-- /row -->
-    </div>
-<!--
     <div class="container-fluid">
         <div class="buttons">
             <input id="reload" type="button" value="Reload pytronics" class="btn btn-large btn-danger rascal" alt="Reload pytronics">
@@ -153,7 +98,6 @@
             <div id="save-message">Saved file</div>
         </div>
     </div>
- -->
 
     <div class="container-fluid">
         <div class="row-fluid">
@@ -169,20 +113,11 @@
                 </div><!--/.well -->
             </div>
             <div class="span9">
-<!--
-                <ul id="editortabs" class="nav nav-tabs">
-                    <li class="filetab active">
-                        <img src="/editor/static/images/file-icons/delete.png" />
-                        <a href="#" rel="tab-1" data-toggle="tab" title="">untitled-1</a>
-                    </li>
-               </ul>
- -->
+                <input id="path" type="hidden" name="path" value="{{ path }}">
+                <div id="location-bar" class="well rascal rm-well-default">&nbsp;</div>
                 <div id="textfield">
                     <textarea id="code" cols="100" rows="120" name="text">{{text_to_edit}}</textarea>
-                    <div id="frame-p" class="frame">
-                        <div id="photo-p" class="photo"></div>
-                        <div id="caption-p" class="caption">&nbsp;</div>
-                    </div>
+                    <div id="frame-p" class="frame"></div>
                 </div>
             </div>
         </div> <!-- /row -->
@@ -393,17 +328,9 @@
     </div>
     <!-- /modal dialogues -->
 
-    <script src="/editor/static/js/red-tabs.js"></script>
-    <script src="/editor/static/js/red-query.js"></script>
-    <script src="/editor/static/js/red-file.js"></script>
-    <script src="/editor/static/js/red-events.js"></script>
-    <script src="/editor/static/js/red-pics.js"></script>
-    <script src="/editor/static/js/red-dnd.js"></script>
-    <script src="/editor/static/js/red-modal.js"></script>
-    <script src="/editor/static/js/commentator.js"></script>
-    <script src="/editor/static/js/red-cm.js"></script>
-    <script src="/editor/static/js/red-main.js"></script>
-
+    <script src="/editor/static/js/editor-resize.js"></script>
+    <script src="/editor/static/js/editor-cm.js"></script>
+    <script src="/editor/static/js/editor.js"></script>
     <script type="text/javascript">
 
         var delay = (function () {
@@ -422,26 +349,38 @@
                 w = $(window).width();
                 h = $(window).height();
                 // console.log('size ' + w + ' x ' + h);
-                // dw = (w > (1260 + XW)) ? w - (1260 + XW) : 0;
+                dw = (w > (1260 + XW)) ? w - (1260 + XW) : 0;
                 dh = (h > (637 + XH)) ? h - (637 + XH) : 0;
                 // console.log('resize ' + dw + ' x ' + dh);
-                $('#filetree').height(412 + dh);
-                $('.CodeMirror').height(475 + dh);
-                editor.refresh();
-                if (rascal.picture.showing) {
-                    setPictureFrameSize($('#frame-p'));
-                    rascal.picture.resize();
+                $('#filetree').height(455 + dh);
+                if (cmVersion === 2) {
+                    $('.CodeMirror-scroll').height(475 + dh);
+                    if (rascal.picture.showing) {
+                        $('#frame-p')
+                            .height($('.CodeMirror-scroll').height())
+                            .width($('.CodeMirror-scroll').width());
+                        rascal.picture.resize();
+                    }
+                } else {
+                    $('.CodeMirror').height(475 + dh);
+                    if (rascal.picture.showing) {
+                        $('#frame-p')
+                            .height($('.CodeMirror').height())
+                            .width($('.CodeMirror').width());
+                        rascal.picture.resize();
+                    } else {
+                        editor.refresh();
+                    }
                 }
             }
         }
 
         $(document).ready(function () {
             "use strict";
-            if (initEditor('{{root}}', '{{home}}', '{{text_to_edit}}')) {
-                initPreferences();
-            }
+            initEditor('{{root}}', '{{home}}');
+            initPreferences();
             adjustGeometry();
-            initRascalDnd();
+            initRascalDnd ();
             displayTree(ROOT + 'templates/');
             $(window).resize(function () {
                 delay(function () {

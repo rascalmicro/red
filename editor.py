@@ -9,7 +9,7 @@ from werkzeug import secure_filename
 (RASCAL, MAC, WINDOWS) = (range(0, 3))
 
 ### Define environment here
-env = RASCAL
+env = MAC
 ### End define
 
 if env == WINDOWS:
@@ -187,14 +187,13 @@ def dirlist(qd): # This function heavily based on Martin Skou's connector script
     s=[]
     try:
         for f in sorted(os.listdir(d), key=unicode.lower):
-            if not f.startswith('.git'):
-                ff=os.path.join(d,f)
-                if os.path.isdir(ff):
-                    r.append('<li class="directory collapsed"><img src="/editor/static/images/file-icons/delete.png"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
-                else:
-                    e=os.path.splitext(f)[1][1:] # get .ext and remove dot
-                    if (e not in noneditable and f != '__init__.py'):
-                        s.append('<li class="file ext_%s"><img src="/editor/static/images/file-icons/delete.png" rel="%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,ff,f))
+            ff=os.path.join(d,f)
+            if os.path.isdir(ff):
+                r.append('<li class="directory collapsed"><img src="/editor/static/images/file-icons/delete.png"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
+            else:
+                e=os.path.splitext(f)[1][1:] # get .ext and remove dot
+                if (e not in noneditable and f != '__init__.py'):
+                    s.append('<li class="file ext_%s"><img src="/editor/static/images/file-icons/delete.png" rel="%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,ff,f))
         r += s
     except Exception,e:
         r.append('Could not load directory: %s' % str(e))
@@ -315,9 +314,9 @@ def example(variable):
 @login_required
 def new_template():
     import os
-#     name = secure_path(request.form['templateName'])
     print '>>> new_template name raw ' + request.form['templateName']
-    name = secure_filename(request.form['templateName'])
+    name = secure_path(request.form['templateName'])
+#     name = secure_filename(request.form['templateName'])
     print '>>> new_template name cooked ' + name
     option = request.form['templateOption']
     if option == 'other':
@@ -360,8 +359,8 @@ def delete_file():
 @login_required
 def new_folder():
     import os, subprocess
-#     name = secure_path(request.form['folderName'])
-    name = secure_filename(request.form['folderName'])
+    name = secure_path(request.form['folderName'])
+#     name = secure_filename(request.form['folderName'])
     path = ROOT + 'static/' + name
     if os.path.exists(path):
         return 'Conflict', 409
@@ -413,8 +412,8 @@ def xupload_file():
         try:
             # Check file type and folder
             print '>>> xupload name raw ' + request.headers['X-File-Name']
-            filename = secure_path(request.headers['X-File-Name'])
-#             filename = secure_filename(request.headers['X-File-Name'])
+#             filename = secure_path(request.headers['X-File-Name'])
+            filename = secure_filename(request.headers['X-File-Name'])
             print '>>> xupload name cooked ' + filename
             try:
                 allowAll = (request.headers['X-AllowAll'] == 'true')
