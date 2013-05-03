@@ -315,9 +315,9 @@ def example(variable):
 @login_required
 def new_template():
     import os
-#     name = secure_path(request.form['templateName'])
     print '>>> new_template name raw ' + request.form['templateName']
-    name = secure_filename(request.form['templateName'])
+    name = secure_path(request.form['templateName'])
+#     name = secure_filename(request.form['templateName'])
     print '>>> new_template name cooked ' + name
     option = request.form['templateOption']
     if option == 'other':
@@ -360,8 +360,8 @@ def delete_file():
 @login_required
 def new_folder():
     import os, subprocess
-#     name = secure_path(request.form['folderName'])
-    name = secure_filename(request.form['folderName'])
+    name = secure_path(request.form['folderName'])
+#     name = secure_filename(request.form['folderName'])
     path = ROOT + 'static/' + name
     if os.path.exists(path):
         return 'Conflict', 409
@@ -413,8 +413,8 @@ def xupload_file():
         try:
             # Check file type and folder
             print '>>> xupload name raw ' + request.headers['X-File-Name']
-            filename = secure_path(request.headers['X-File-Name'])
-#             filename = secure_filename(request.headers['X-File-Name'])
+#             filename = secure_path(request.headers['X-File-Name'])
+            filename = secure_filename(request.headers['X-File-Name'])
             print '>>> xupload name cooked ' + filename
             try:
                 allowAll = (request.headers['X-AllowAll'] == 'true')
