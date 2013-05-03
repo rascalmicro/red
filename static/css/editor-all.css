@@ -5,7 +5,8 @@ body {
     font-size: 1em;
     line-height: 1.2em;
     color: #F8F8F8;
-    background-color: #666;
+    /* background-color: #666; */
+    background-color: #888;
 }
 
 p {

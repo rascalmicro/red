@@ -1,4 +1,5 @@
-// Support for CodeMirror
+// Support for CodeMirror including preferences
+// dsmall 27 Apr 2013 This version requires CodeMirror v3.1 or later
 // JSLint 8 Oct 2012 jQuery $ applyTheme applyFontSize applyLineHeight applyTabSize
 // applySoftTabs applyVisibleTabs applyIndentUnit applyLineNumbers applyHighlightActive
 // applyLineWrapping applyMatchBrackets CodeMirror editor trackChanges fileChanged preferences
@@ -45,38 +46,8 @@ var prefs = {
     }
 };
 
-function setPictureFrameSize(frp) {
-    "use strict";
-    frp.height($('.CodeMirror-scroll').height())
-        .width($('.CodeMirror-scroll').width());
-}
-
 // Used to identify version specific changes (set by initEditor)
 var cmVersion;
-
-// Support for highlighting active line
-var hlActive = false;
-var hlLine = null;
-var hlLineStyle = "activeline-default";
-
-function activeline() {
-    if (hlActive) {
-        if (hlLine !== null) {
-            if (cmVersion < 3.0) {
-                editor.setLineClass(hlLine, null, null);
-            } else {
-                editor.removeLineClass(hlLine, null, hlLineStyle);
-            }
-        } else {
-            console.log('WARNING activeline: hlLine is null');
-        }
-        if (cmVersion < 3.0) {
-            hlLine = editor.setLineClass(editor.getCursor().line, null, hlLineStyle);
-        } else {
-            hlLine = editor.addLineClass(editor.getCursor().line, null, hlLineStyle);
-        }
-    }
-}
 
 // Initialise editor with soft tabs
 function softTabs(cm) {
@@ -119,171 +90,13 @@ function formatJSON(cm) {
     }
 }
 
-// Extend modes for commentator
-// Add commentLine for modes that should have single-line comments or
-//  commentStart/commentEnd for multi-line comments
-// Only add a single-line delimiter or multi-line delimiters, not both
-// Commentator only works on modes with comment delimiters set here
-// Note that html code is mode XML and javascript/jsonMode is ignored
-function initCommentator() {
-    CodeMirror.extendMode("xml", {
-        commentStart: "<!-- ",
-        commentEnd: " -->"
-    });
-    CodeMirror.extendMode("css", {
-        commentStart: "/* ",
-        commentEnd: " */"
-    });
-    CodeMirror.extendMode("javascript", {
-        commentLine: '// ',
-        commentStart: "/* ",
-        commentEnd: " */"
-    });
-    CodeMirror.extendMode("python", {
-        commentLine: '# ',
-        commentStart: '""" ',
-        commentEnd: ' """'
-    });
-}
-
-// Comment or uncomment a single line or block of code
-// Click on a line or make a selection, then type Cmd-/
-function commentator(cm) {
-    var
-        start = cm.getCursor('start'),
-        end = cm.getCursor('end'),
-        curMode = CodeMirror.innerMode(cm.getMode(), cm.getTokenAt(start).state).mode,
-        name = curMode.name,
-        commentLine = curMode.commentLine,
-        commentStart = curMode.commentStart,
-        commentEnd = curMode.commentEnd,
-        jsDocstring = false,
-        startText, trimText, cStart,
-        currentLine,
-        args = {
-            oneLine: true,
-            block: false,
-            empty: true,
-            notEmpty: false
-        };
-
-    function commentSingleLine(line, oneLine) {
-        var
-            delimiter = commentLine,
-            text = cm.getLine(line),
-            wsBefore = '';
-        if (oneLine) {
-            wsBefore = /^\s*/.exec(text);
-            text = text.replace(/^\s*/, '');
-        }
-        if (text.indexOf(delimiter, 0) === 0) {
-            text = text.substring(delimiter.length);
-        } else {
-            text = delimiter + text;
-        }
-        cm.setLine(line, wsBefore + text);
-    }
-
-    function commentSelection(empty) {
-        var
-            delStart = commentStart,
-            delEnd = commentEnd,
-            text = cm.getSelection();
-        // If not jsDocstring, revert to single line comment for empty lines
-        if (empty && (name === 'javascript') && !jsDocstring) {
-            delStart = commentLine;
-            delEnd = '';
-        }
-        if (text.indexOf(delStart, 0) === 0) {
-            if (text.indexOf(delEnd, text.length - delEnd.length) !== -1) {
-                text = text.substring(delStart.length, text.length - delEnd.length);
-            }
-        } else {
-            text = delStart + text + delEnd;
-        }
-        cm.replaceSelection(text);
-        if (empty) {
-            cm.setSelection({line: start.line, ch: start.ch + delStart.length});
-        }
-    }
-
-    // console.log('start ' + JSON.stringify(start));
-    // console.log('end ' + JSON.stringify(end));
-    // console.log(curMode);
-     console.log('commentator: ' + name);
-
-    // If mode is commentable
-    if (commentLine || commentStart) {
-        // Ignore javascript JSON mode
-        if ((name === 'javascript') && curMode.jsonMode) {
-            console.log('commentator: ignoring JSON mode');
-            return;
-        }
-
-        if (start.line === end.line && start.ch === end.ch) {
-
-            // If no selection
-            startText = cm.getLine(start.line);
-            trimText = startText.trim();
-
-            if ((trimText.length === 0) && commentStart) {
-                // If line is empty and multi-line comments available, leave cursor in
-                // comment (useful for py docstring, maybe for javascript)
-                commentSelection(args.empty);
-            } else if (commentStart &&
-                    (trimText.indexOf(commentStart, 0) === 0) &&
-                    (trimText.indexOf(commentEnd, trimText.length - commentEnd.length !== -1))) {
-                // If line is just a multi-line comment, select and uncomment it
-                cStart = startText.indexOf(commentStart, 0);
-                cm.setSelection({line: start.line, ch: cStart},
-                    {line: start.line, ch: cStart + trimText.length});
-                commentSelection(args.notEmpty);
-            } else if (commentLine) {
-                // Comment/uncomment single line even if indented
-                commentSingleLine(start.line, args.oneLine && (start.ch !== 0));
-            } else {
-                // Turn into to a selection
-                cm.setSelection({line: start.line, ch: 0}, {line: start.line, ch: null});
-                commentSelection(args.notEmpty);
-            }
-
-        } else {
-
-            // There is a selection
-            if ((commentLine && (start.ch === 0)) || !commentStart) {
-                // Single-line comments are preferred for selections from start of line
-                if (start.line === end.line &&
-                    ((name === 'python') || ((name === 'javascript') && jsDocstring))) {
-                    // If python or jsDocstring, make single line selection an exception
-                    commentSelection(args.notEmpty);
-                } else {
-                    // Extend selection to whole lines
-                    if (end.ch !== 0) {
-                        end.line += 1;
-                        end.ch = 0;
-                    }
-                    // Iterate over selected lines
-                    currentLine = start.line;
-                    while (currentLine < end.line) {
-                        commentSingleLine(currentLine, args.block);
-                        currentLine += 1;
-                    }
-                    cm.setSelection(start, end);
-                }
-            } else {
-                // multi-line comment
-                commentSelection(args.notEmpty);
-            }
-
-        }
-    }
-}
-
-function initEditor(root, home) {
+function initEditor(root, home, default_text) {
     ROOT = root;
     HOME = home;
+    DEFAULT_TEXT = default_text;
     console.log('Root: ' + ROOT);
     console.log('Home: ' + HOME);
+    console.log('Default text: ' + DEFAULT_TEXT);
     // The next line fixes a dangerous bug in Firefox Mac 18.0.2
     $('#path').val('');
     trackChanges(false);
@@ -299,12 +112,9 @@ function initEditor(root, home) {
             "Ctrl-J": formatJSON,
             "Cmd-/": commentator,
             "Ctrl-/": commentator
-       }
-//        onCursorActivity: activeline
-//        electricChars: false,
-//        onChange: fileChanged
+        }
     });
-    initCommentator();
+//     console.log(JSON.stringify(CodeMirror.defaults));
     if (CodeMirror.version !== undefined) {
         console.log('CodeMirror version: ' + CodeMirror.version);
         cmVersion = parseFloat(CodeMirror.version);
@@ -312,67 +122,57 @@ function initEditor(root, home) {
         console.log('CodeMirror version: v2.33 or earlier');
         cmVersion = 2.0;
     }
-    if (cmVersion < 3.0) {
-        $('.CodeMirror-scroll').height(475);
-        editor.setOption('fixedGutter', true);
-        editor.setOption('onCursorActivity', activeline);
-        editor.setOption('onChange', fileChanged);
-    } else {
-        $('.CodeMirror').height(475);
-        editor.on('cursorActivity', activeline);
-        editor.on('change', fileChanged);
+    if (cmVersion < 3.1) {
+        editorSetText('Requires CodeMirror v3.1 or later (currently v'
+            + cmVersion.toString() + ')');
+        return false;
     }
-    // Load support for search
-    if (cmVersion <= 3.0) {
-        $.getScript('/editor/static/codemirror/lib/util/searchcursor.js');
-        $.getScript('/editor/static/codemirror/lib/util/search.js');
-        $('head').append( $('<link rel="stylesheet" type="text/css" />')
-            .attr('href', '/editor/static/codemirror/lib/util/dialog.css') );
-        $.getScript('/editor/static/codemirror/lib/util/dialog.js');
-    } else {
-        $.getScript('/editor/static/codemirror/addon/search/searchcursor.js');
-        $.getScript('/editor/static/codemirror/addon/search/search.js');
-        $('head').append( $('<link rel="stylesheet" type="text/css" />')
-            .attr('href', '/editor/static/codemirror/addon/dialog/dialog.css') );
-        $.getScript('/editor/static/codemirror/addon/dialog/dialog.js');
-    }
+    initCommentator();
+    initExceptions();
+    initTabs();
+    editor.on('change', fileChanged);
+    return true;
 }
 
-//   CodeMirror.defaults = {
+// CM v3.12 immediately after initialisation
+// CodeMirror.defaults = {
 //     value: "",
-//     mode: null,
-//     theme: "default",
+//     mode: "clike",
 //     indentUnit: 2,
 //     indentWithTabs: false,
 //     smartIndent: true,
 //     tabSize: 4,
+//     electricChars: true,
+//     rtlMoveVisually: true,
+//     theme: "default",
 //     keyMap: "default",
 //     extraKeys: null,
-//     electricChars: true,
-//     autoClearEmptyLines: false,
 //     onKeyEvent: null,
 //     onDragEvent: null,
 //     lineWrapping: false,
+//     gutters: [],
+//     fixedGutter: true,
 //     lineNumbers: false,
-//     gutter: false,
-//     fixedGutter: false,
 //     firstLineNumber: 1,
+//     showCursorWhenSelecting: false,
 //     readOnly: false,
 //     dragDrop: true,
-//     onChange: null,
-//     onCursorActivity: null,
-//     onGutterClick: null,
-//     onHighlightComplete: null,
-//     onUpdate: null,
-//     onFocus: null, onBlur: null, onScroll: null,
-//     matchBrackets: false,
+//     cursorBlinkRate: 530,
+//     cursorHeight: 1,
 //     workTime: 100,
-//     workDelay: 200,
+//     workDelay: 100,
+//     flattenSpans: true,
 //     pollInterval: 100,
 //     undoDepth: 40,
+//     historyEventDelay: 500,
+//     viewportMargin: 10,
+//     maxHighlightLength: 10000,
+//     moveInputWithCursor: true,
 //     tabindex: null,
-//     autofocus: null
-//   };
+//     autofocus: null,
+//     matchBrackets: false,
+//     styleActiveLine: false
+// };
 
 function editorSetMode(ext) {
     "use strict";
@@ -419,17 +219,20 @@ function editorSetMode(ext) {
     editor.setOption('readOnly', (ext === 'log'));
 }
 
+// Public API
 function editorSetText(s, ext) {
     "use strict";
+    trackChanges(false);
     if (ext === undefined) {
         ext = 'txt';
     }
     // Fix to ensure activeLine is updated when loading a new file
-    editor.setValue(' ');
-    editor.setCursor(0, 1);
+//     editor.setValue(' ');
+//     editor.setCursor(0, 1);
     // End fix
     editor.setValue(s);
     editorSetMode(ext);
+    trackChanges(true);
 }
 
 function editorGetText() {
@@ -437,9 +240,14 @@ function editorGetText() {
     return editor.getValue();
 }
 
-function isReadOnly() {
+function editorIsReadOnly() {
     return editor.getOption('readOnly');
 }
+
+function editorSetReadOnly(bReadOnly) {
+    editor.setOption('readOnly', bReadOnly);
+}
+// End public API
 
 var THEMES = ['default', 'night', 'solarized-light', 'solarized-dark'];
 
@@ -447,7 +255,8 @@ var THEMES = ['default', 'night', 'solarized-light', 'solarized-dark'];
 function applyTheme() {
     "use strict";
     var oldTheme = editor.getOption('theme'),
-        newTheme;
+        newTheme,
+        background;
     // console.log('applyTheme ' + preferences.theme);
     editor.setOption('theme', preferences.theme);
     // Set theme for other panes
@@ -470,12 +279,42 @@ function applyTheme() {
         .addClass('rm-well-' + newTheme);
 
     // Set active line highlight color
-    hlLineStyle = 'activeline-' + newTheme;
-    // console.log('+ hlLineStyle ' + hlLineStyle);
-    if (preferences.highlightActive) {
-        if (hlLine !== null) {
-            activeline();
-        }
+    switch (newTheme) {
+    case 'default':
+        background = '#ededed';
+        break;
+    case 'night':
+        background = '#1e005c';
+        break;
+    case 'solarized-light':
+        background = '#eee8d5';
+        break;
+    case 'solarized-dark':
+        background = '#073642';
+        break;
+    default:
+        background = '#1c264e';
+    }
+    addRule(background);
+}
+
+// See http://stackoverflow.com/questions/3164740/
+function addRule(background) {
+    var sel = '.CodeMirror-activeline-background',
+        val = 'background-color: ' + background + ' !important',
+        rule, sheet, rules;
+    // Rule for non-IE browsers
+    rule = sel + ' { ' + val + '; }';
+    console.log('Adding rule ' + rule);
+    // Find last set of rules
+    sheet = document.styleSheets[document.styleSheets.length - 1];
+    rules = 'cssRules' in sheet ? sheet.cssRules : sheet.rules; // IE compatibility
+    // Append rule at end
+    if ('insertRule' in sheet) {
+        sheet.insertRule(rule, rules.length);
+    } else {
+        // IE compatibility
+        sheet.addRule(sel, val, rules.length);
     }
 }
 
@@ -545,30 +384,8 @@ function applyLineNumbers() {
 
 function applyHighlightActive() {
     "use strict";
-    // console.log('applyHighlightActive ' + preferences.highlightActive);
-    if (preferences.highlightActive !== hlActive) {
-        hlActive = preferences.highlightActive;
-        if (hlActive) {
-            // console.log('+ turning on hlActive');
-            if (cmVersion < 3.0) {
-                hlLine = editor.setLineClass(editor.getCursor().line, null, hlLineStyle);
-            } else {
-                hlLine = editor.addLineClass(editor.getCursor().line, null, hlLineStyle);
-            }
-        } else {
-            // console.log('+ turning off hlActive');
-            // Clear current highlight
-            if (hlLine !== null) {
-                if (cmVersion < 3.0) {
-                    editor.setLineClass(hlLine, null, null);
-                } else {
-                    editor.removeLineClass(hlLine, null, null);
-                }
-            } else {
-                console.log('+ WARNING hlLine is null');
-            }
-        }
-    }
+//     console.log('applyHighlightActive ' + preferences.highlightActive);
+    editor.setOption('styleActiveLine', preferences.highlightActive);
 }
 
 function applyLineWrapping() {
@@ -580,21 +397,7 @@ function applyLineWrapping() {
 function applyMatchBrackets() {
     "use strict";
     // console.log('applyMatchBrackets ' + preferences.matchBrackets);
-    if ((cmVersion >= 3.0) && (editor.getOption('matchBrackets') === undefined)) {
-        if (cmVersion === 3.0) {
-            console.log('CM version 3: loading matchbrackets.js');
-            $.getScript('/editor/static/codemirror/lib/util/matchbrackets.js', function () {
-                editor.setOption('matchBrackets', preferences.matchBrackets);
-            });
-        } else {
-            console.log('CM version 3.1+: loading matchbrackets.js');
-            $.getScript('/editor/static/codemirror/addon/edit/matchbrackets.js', function () {
-                editor.setOption('matchBrackets', preferences.matchBrackets);
-            });
-        }
-    } else {
-        editor.setOption('matchBrackets', preferences.matchBrackets);
-    }
+    editor.setOption('matchBrackets', preferences.matchBrackets);
 }
 
 function setTheme() {

@@ -1,4 +1,4 @@
-/* Library started by dsmall 2012 v1.04 */
+/* Library dsmall 2012-13 v1.04 */
 // JSLint 6 Oct 2012 jQuery $
 
 // NB Event handlers need to be named and static to avoid duplication
@@ -9,7 +9,7 @@ var rascal = {
         root: '/var/www/public/',
         container: 'filetree',
         notDraggable: [],
-        changedFile: undefined,
+        changedFiles: [],
         itemDropped: function (src, dst) {
             "use strict";
         },
@@ -87,7 +87,7 @@ var rascal = {
         },
         bindTree: function (t) {
             "use strict";
-            var el, dragItems, dragTargets, i;
+            var el, dragItems, dragTargets, i, path;
             // Make all items draggable except for those in notDraggable array
             $(t).find('LI A').attr('draggable', function () {
                 if ($.inArray(this.rel, rascal.dnd.notDraggable) >= 0) {
@@ -114,8 +114,10 @@ var rascal = {
                 dragTargets[i].addEventListener('drop', rascal.dnd.handleDrop, false);
                 dragTargets[i].addEventListener('dragleave', rascal.dnd.handleDragLeave, false);
             }
-            if (rascal.dnd.changedFile !== undefined) {
-                $('LI A[rel="' + rascal.dnd.changedFile + '"]').addClass('changed');
+            console.log('<- ' + JSON.stringify(rascal.dnd.changedFiles));
+            for (i = 0; i < rascal.dnd.changedFiles.length; i += 1) {
+                console.log('-> ' + rascal.dnd.changedFiles[i]);
+                $('li > a[rel="' + rascal.dnd.changedFiles[i] + '"]').addClass('changed');
             }
         }
     },
@@ -300,6 +302,7 @@ var rascal = {
     // Support for picture scaling
     picture: {
         imgRoot: '/',
+        fpath: '',
         container: '',
         caption: '',
         gap: 50,
@@ -309,6 +312,7 @@ var rascal = {
         show: function (fpath) {
             "use strict";
             var rp = rascal.picture, rpc, img;
+            rp.fpath = fpath;
             rpc = '#' + rp.container;
             $(rpc).children().remove();
             $(rpc).append('<img />');
