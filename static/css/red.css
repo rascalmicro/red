@@ -1,8 +1,12 @@
-/* This file is specific to the editor page */
+/* These styles are specific to the editor page */
 
 /* buttons and progress-bars */
 .buttons {
     padding: 4px 0;
+}
+
+.progress-bars {
+    clear: both;
 }
 
 #save {
@@ -10,19 +14,15 @@
     width: 120px;
 }
 
-#reload {
-    float: right;
-    width: 160px;
-}
-
-.progress-bars {
-}
-
 .progress-save {
     float: left;
     margin-top: 5px;
     width: 120px;
-    padding-right: 5px;
+}
+
+#reload {
+    float: right;
+    width: 160px;
 }
 
 .progress-reload {
@@ -48,13 +48,58 @@
 #save-message {
     visibility: hidden;
     display: inline;
+    margin-left: 5px;
 }
 
 #save-message.warning {
     color: red;
 }
 
-/* sidebar */
+/* tabs */
+#editortabs {
+    position: absolute;
+    bottom: 0;
+    margin-right: 160px;
+}
+
+/* amend bootstrap tabs */
+ul.nav.nav-tabs {
+    border-bottom: 0;
+    margin-bottom: 0;
+    margin-left: 6px;
+}
+
+li > a {
+    color: #e7e8e9;
+}
+
+ul.nav.nav-tabs a {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+#editortabs a.changed {
+    color: #ef4a42;
+}
+
+/* filetab close icon */
+ul.nav img {
+    float: right;
+    margin-right: 3px;
+    margin-top: 2px;
+    width: 11px;
+    opacity: 0.0;
+}
+
+ul.nav img.selected {
+    opacity: 0.6;
+}
+
+ul.nav img.selected:hover {
+    opacity: 1.0;
+}
+
+/* sidebar (see also jquery.filetree.css) */
 .well.rascal {
     padding: 3px;
     margin-bottom: 5px;
@@ -107,43 +152,6 @@ a[draggable=true] {
 }
 
 /* editor */
-
-/* amend bootstrap tabs */
-ul.nav.nav-tabs {
-    border-bottom: 0;
-    margin-bottom: 0;
-    margin-left: 6px;
-}
-
-li > a {
-    color: #e7e8e9;
-}
-
-ul.nav.nav-tabs a {
-    padding-top: 4px;
-    padding-bottom: 4px;
-}
-
-#editortabs a.changed {
-    color: #ef4a42;
-}
-
-/* filetab close icon */
-ul.nav img {
-    float: right;
-    margin-right: 3px;
-    margin-top: 2px;
-    width: 11px;
-    opacity: 0.0;
-}
-
-ul.nav img.selected {
-    opacity: 0.6;
-}
-
-ul.nav img.selected:hover {
-    opacity: 1.0;
-}
 
 /* container for CodeMirror and picture frame */
 #textfield {

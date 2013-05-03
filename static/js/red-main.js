@@ -103,7 +103,9 @@ function updateTitle(fpath) {
 }
 
 // fileTree operations
-// Load a new picture or file when clicked. For files, change tracking is resumed
+// Load a new picture or file when clicked.
+// For files, loading sets the readOnly flag to true for log files, false for
+// everything else and resumes change tracking
 function loadFile(path) {
     "use strict";
     var

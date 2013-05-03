@@ -75,85 +75,41 @@
 <body>
     {% include "include/editor-topbar.html" %}
 
-    <!-- <div class="container-fluid" style="margin-bottom: -2px;"> -->
     <div class="container-fluid">
         <div class="row-fluid">
             <div class="span3">
-                <table border="0" cellspacing="0" cellpadding="0" width="100%">
-                    <tr>
-                        <td>
-                            <div class="buttons">
-                                <input id="save" type="button" value="Save" class="btn btn-large btn-danger rascal" alt="Save">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        <!-- <div class="progress-bars"> -->
-                            <div class="progress-save">
-                                <div id="save-progress" class="progress progress-danger rascal">
-                                    <div id="save-bar" class="bar" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                            <div id="save-message">Saved file</div>
-                        <!-- </div> -->
-                        </td>
-                    </tr>
-                </table>
+                <div class="buttons">
+                    <input id="save" type="button" value="Save" class="btn btn-large btn-danger rascal" alt="Save">
+                </div>
+                <div class="progress-bars">
+                    <div class="progress-save">
+                        <div id="save-progress" class="progress progress-danger rascal">
+                            <div id="save-bar" class="bar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div id="save-message">Saved file</div>
+                </div>
             </div>
-            <div class="span9">
-                <table border="0" cellspacing="0" cellpadding="0" width="100%">
-                    <tr>
-                        <td rowspan="2" valign="bottom">
-                            <ul id="editortabs" class="nav nav-tabs">
-                                <li class="filetab active">
-                                    <img src="/editor/static/images/file-icons/delete.png" />
-                                    <a href="#" rel="tab-1" data-toggle="tab" title="">untitled-1</a>
-                                </li>
-                           </ul>
-                        </td>
-                        <td width="160">
-                            <div class="buttons">
-                                <input id="reload" type="button" value="Reload pytronics" class="btn btn-large btn-danger rascal" alt="Reload pytronics">
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                        <!-- <div class="progress-bars"> -->
-                            <div class="progress-reload">
-                                <div id="reload-progress" class="progress progress-danger rascal">
-                                    <div id="reload-bar" class="bar" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                        <!-- </div> -->
-                        </td>
-                    </tr>
-                </table>
+            <div class="span9" style="position: relative">
+                <ul id="editortabs" class="nav nav-tabs">
+                    <li class="filetab active">
+                        <img src="/editor/static/images/file-icons/delete.png" />
+                        <a href="#" rel="tab-1" data-toggle="tab" title="">untitled-1</a>
+                    </li>
+                </ul>
+                <div class="buttons">
+                    <input id="reload" type="button" value="Reload pytronics" class="btn btn-large btn-danger rascal" alt="Reload pytronics">
+                </div>
+                <div class="progress-bars">
+                    <div class="progress-reload">
+                        <div id="reload-progress" class="progress progress-danger rascal">
+                            <div id="reload-bar" class="bar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div> <!-- /row -->
-    </div>
-<!--
-    <div class="container-fluid">
-        <div class="buttons">
-            <input id="reload" type="button" value="Reload pytronics" class="btn btn-large btn-danger rascal" alt="Reload pytronics">
-            <input id="save" type="button" value="Save" class="btn btn-large btn-danger rascal" alt="Save">
-        </div>
-        <div class="progress-bars">
-            <div class="progress-reload">
-                <div id="reload-progress" class="progress progress-danger rascal">
-                    <div id="reload-bar" class="bar" style="width: 0%;"></div>
-                </div>
-            </div>
-            <div class="progress-save">
-                <div id="save-progress" class="progress progress-danger rascal">
-                    <div id="save-bar" class="bar" style="width: 0%;"></div>
-                </div>
-            </div>
-            <div id="save-message">Saved file</div>
-        </div>
-    </div>
- -->
+    </div> <!-- /container -->
 
     <div class="container-fluid">
         <div class="row-fluid">
@@ -169,14 +125,6 @@
                 </div><!--/.well -->
             </div>
             <div class="span9">
-<!--
-                <ul id="editortabs" class="nav nav-tabs">
-                    <li class="filetab active">
-                        <img src="/editor/static/images/file-icons/delete.png" />
-                        <a href="#" rel="tab-1" data-toggle="tab" title="">untitled-1</a>
-                    </li>
-               </ul>
- -->
                 <div id="textfield">
                     <textarea id="code" cols="100" rows="120" name="text">{{text_to_edit}}</textarea>
                     <div id="frame-p" class="frame">

@@ -3,15 +3,15 @@
 // New tabs are cloned from the last (right-hand) tab
 // There are two types of tab - those related to a file and anonymous tabs
 // Examples of anonymous tabs are 'untitled-1' when the editor is opened and
-// tabs opened for messages by drag and drop upload and reload pytronics
-// If you delete the last tab, a new anonymous tab is cloned from the last tab
+// tabs opened for messages from drag and drop upload and reload pytronics
+// If you close the last tab, a new anonymous tab is cloned from the last tab
 // before it is deleted
 //
 // Because new tabs are cloned by the addTab() function, there is only one master
 // copy of the tab HTML, located in the main editor page. The object named instances
 // (see below) holds additional information for each tab, including file path,
-// CodeMirror doc and the file changed flag. The master copy of this structure is
-// INSTANCE (below) which is cloned by the addInstance() function
+// CodeMirror doc and the file changed and read only flags. The master copy of this
+// structure is INSTANCE (below) which is cloned by the addInstance() function
 //
 // When you click a file in the list, one of three things happens:
 // 1. If the file is already open, the tab is repopulated. If the editor version has
@@ -22,7 +22,7 @@
 // When you delete a file in the list and there is a tab open for that file,
 // it is deleted (irrespective of whether the editor version has been changed)
 //
-// When you delete a tab and the editor version has unsaved changes, the Save dialog
+// When you close a tab and the editor version has unsaved changes, the Save dialog
 // is shown with the options of Save, Cancel or Don't Save
 
 // Tabbed editor instances keyed by tab ID
@@ -80,7 +80,7 @@ function getPath() {
     return instances[tab].fpath;
 }
 
-// Called before revert
+// Called from displayTree() after filetree click before revert and by moveItem()
 function fileHasBeenChanged(fpath) {
     var tab, instance;
     for (tab in instances) {
@@ -92,7 +92,7 @@ function fileHasBeenChanged(fpath) {
     return false;
 }
 
-// Called after a move
+// Called from moveItem after a move
 function updateLocation(tab, fpath) {
     $('#editortabs a[rel="' + tab + '"]')
         .attr('title', fpath)
@@ -215,17 +215,16 @@ function tabShown(e) {
 
 /* EVENT HANDLERS */
 // Delegated default event handler when tab shown
-// $('a[data-toggle="tab"]').on('shown', function (e) {
 $('#editortabs').on('shown', 'a[data-toggle="tab"]', function (e) {
     tabShown(e);
 });
 
-// Delegated event handler to enable/disable the filetab delete icon
+// Delegated event handler to enable/disable the filetab close icon
 $('#editortabs').on('mouseenter mouseleave', 'li.filetab', function (event) {
     "use strict";
     // Only show the icon when tab is active and there is more than one tab
-//     if ($(this).hasClass('active') && ($('li.filetab').length > 1)) {
-    // Only show the delete icon when tab is active
+    // if ($(this).hasClass('active') && ($('li.filetab').length > 1)) {
+    // Only show the close icon when tab is active
     if ($(this).hasClass('active')) {
         if (event.type === 'mouseenter') {
             // console.log('mouseenter');
@@ -237,7 +236,7 @@ $('#editortabs').on('mouseenter mouseleave', 'li.filetab', function (event) {
     }
 });
 
-// Delegated event handler for clicking the filetab delete icon
+// Delegated event handler for clicking the filetab close icon
 $('#editortabs').on('click', 'li.filetab > img', function (event) {
     "use strict";
 //     var key = $(this).parent().children('a').attr('rel');
