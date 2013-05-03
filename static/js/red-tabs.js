@@ -1,4 +1,5 @@
-/* SUPPORT FOR TABS */
+/* SUPPORT FOR TABS - April 2013 */
+
 // There is always at least one tab
 // New tabs are cloned from the last (right-hand) tab
 // There are two types of tab - those related to a file and anonymous tabs
@@ -7,7 +8,7 @@
 // If you close the last tab, a new anonymous tab is cloned from the last tab
 // before it is deleted
 //
-// Because new tabs are cloned by the addTab() function, there is only one master
+// Because new tabs are cloned by the addTab() function, there need only be one master
 // copy of the tab HTML, located in the main editor page. The object named instances
 // (see below) holds additional information for each tab, including file path,
 // CodeMirror doc and the file changed and read only flags. The master copy of this
@@ -19,11 +20,11 @@
 // 2. If there is an anonymous tab, it is reused
 // 3. Otherwise a new tab is created
 //
-// When you delete a file in the list and there is a tab open for that file,
-// it is deleted (irrespective of whether the editor version has been changed)
-//
-// When you close a tab and the editor version has unsaved changes, the Save dialog
+// When you close a tab and the editor has unsaved changes, the Save dialog
 // is shown with the options of Save, Cancel or Don't Save
+//
+// When you delete a file via list and there is a tab open for that file,
+// it is deleted (irrespective of whether the editor content has been changed)
 
 // Tabbed editor instances keyed by tab ID
 // Model for instance (to be cloned)
@@ -55,6 +56,7 @@ function addInstance(tab, fpath) {
 }
 
 /* PUBLIC API */
+
 // Only called from initEditor
 function initTabs() {
     addInstance('tab-1', '');
@@ -80,7 +82,7 @@ function getPath() {
     return instances[tab].fpath;
 }
 
-// Called from displayTree() after filetree click before revert and by moveItem()
+// Called from displayTree() after filetree click before revert, and by moveItem()
 function fileHasBeenChanged(fpath) {
     var tab, instance;
     for (tab in instances) {
@@ -101,6 +103,7 @@ function updateLocation(tab, fpath) {
 }
 
 /* PUBLIC AND PRIVATE */
+
 // Close active tab
 // With filetree deletion, could be last tab
 function closeTab() {
@@ -168,6 +171,7 @@ function switchToTab(fpath) {
 }
 
 /* PRIVATE */
+
 // Create tab for file fpath
 // If fpath is the empty string, it creates an anonymous tab
 function addTab(fpath) {
@@ -214,6 +218,7 @@ function tabShown(e) {
 }
 
 /* EVENT HANDLERS */
+
 // Delegated default event handler when tab shown
 $('#editortabs').on('shown', 'a[data-toggle="tab"]', function (e) {
     tabShown(e);
