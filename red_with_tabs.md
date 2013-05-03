@@ -5,13 +5,15 @@ red with tabs
 
 #### WORTH NOTING
 
-1. There is always at least one tab. red starts out with an anonymous tab "untitled-1",
-anonymous in the sense that it has no file associated with it. Anonymous tabs are reused
-for files or messages.
-2. You can only close the active tab.
-3. You can close the last tab but it will be replaced by an anonymous tab.
-4. The preferred way to dismiss a picture is by clicking it.
-5. You can open a page from the filetree by Cmd-Click. See `click-test.html` for a full list.
+* There is always at least one tab. red starts out with an anonymous tab "untitled-1"
+* This is anonymous in the sense that it has no file associated with it.
+* Anonymous tabs are reused for files or messages.
+* Clicking a tab makes it active and loads its content into the editor.
+* Clicking an active tab does nothing.
+* You can only close the active tab (by clicking the X)
+* You can close the last tab but it will be replaced by an anonymous tab.
+* The preferred way to dismiss a picture is by clicking it.
+* You can open a page from the filetree with Cmd-Click. See `click-test.html` for more information.
 
 #### DONE
 
