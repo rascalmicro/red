@@ -1,8 +1,13 @@
 // Support for CodeMirror including preferences
 // dsmall 27 Apr 2013 This version requires CodeMirror v3.1 or later
-// JSLint 8 Oct 2012 jQuery $ applyTheme applyFontSize applyLineHeight applyTabSize
-// applySoftTabs applyVisibleTabs applyIndentUnit applyLineNumbers applyHighlightActive
-// applyLineWrapping applyMatchBrackets CodeMirror editor trackChanges fileChanged preferences
+
+/*jshint strict: true */
+/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
+/*global ROOT: true, HOME: true, DEFAULT_TEXT: true, editor: true, preferences: true, initExceptions */
+/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, fileChanged, displayTree */
+/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
+/*global commentator, initCommentator */
+/*global initTabs */
 
 var prefs = {
     defaults: {
@@ -16,7 +21,9 @@ var prefs = {
         lineNumbers: false,
         highlightActive: true,
         lineWrapping: true,
-        matchBrackets: false
+        matchBrackets: false,
+        closeBrackets: false,
+        useLint: false
     },
     types: {
         theme: 'string',
@@ -29,7 +36,9 @@ var prefs = {
         lineNumbers: 'boolean',
         highlightActive: 'boolean',
         lineWrapping: 'boolean',
-        matchBrackets: 'boolean'
+        matchBrackets: 'boolean',
+        closeBrackets: 'boolean',
+        useLint: 'boolean'
     },
     apply: {
         theme: applyTheme,
@@ -42,12 +51,17 @@ var prefs = {
         lineNumbers: applyLineNumbers,
         highlightActive: applyHighlightActive,
         lineWrapping: applyLineWrapping,
-        matchBrackets: applyMatchBrackets
+        matchBrackets: applyMatchBrackets,
+        closeBrackets: applyCloseBrackets,
+        useLint: applyUseLint
     }
 };
 
 // Used to identify version specific changes (set by initEditor)
 var cmVersion;
+
+// Used to optimise lint support
+var lintIsLoaded = false;
 
 // Initialise editor with soft tabs
 function softTabs(cm) {
@@ -69,7 +83,7 @@ function formatJSON(cm) {
     "use strict";
     var mode, s, o, t;
     mode = cm.getOption('mode');
-    if ((mode != null) && typeof (mode === 'object') && (mode.json)) {
+    if (mode === 'application/json') {
         console.log('formatJSON true');
         try {
             s = cm.getValue();
@@ -91,6 +105,7 @@ function formatJSON(cm) {
 }
 
 function initEditor(root, home, default_text) {
+    "use strict";
     ROOT = root;
     HOME = home;
     DEFAULT_TEXT = default_text;
@@ -123,8 +138,8 @@ function initEditor(root, home, default_text) {
         cmVersion = 2.0;
     }
     if (cmVersion < 3.1) {
-        editorSetText('Requires CodeMirror v3.1 or later (currently v'
-            + cmVersion.toString() + ')');
+        editorSetText('Requires CodeMirror v3.1 or later (currently v' +
+            cmVersion.toString() + ')');
         return false;
     }
     initCommentator();
@@ -188,7 +203,8 @@ function editorSetMode(ext) {
         mode = 'javascript';
         break;
     case 'json':
-        mode = {name: 'javascript', json: true};
+        // mode = {name: 'javascript', json: true};
+        mode = 'application/json';
         break;
     case 'py':
         mode = 'python';
@@ -214,9 +230,70 @@ function editorSetMode(ext) {
     default:
         mode = 'text';
     }
+
     console.log('mode ' + mode);
     editor.setOption('mode', mode);
-    editor.setOption('readOnly', (ext === 'log'));
+}
+
+function editorSetModeOptions () {
+    "use strict";
+    var mode = editor.getOption('mode');
+
+    function lintJavascript () {
+        console.log('> lint javascript');
+        editor.setOption('gutters', ['CodeMirror-lint-markers']);
+        editor.setOption('lintWith', CodeMirror.javascriptValidator);
+    }
+    function lintJson () {
+        console.log('> lint json');
+        editor.setOption('gutters', ['CodeMirror-lint-markers']);
+        editor.setOption('lintWith', CodeMirror.jsonValidator);
+    }
+    function lintClear() {
+        console.log('> lint clear');
+        editor.setOption('gutters', []);
+        editor.setOption('lintWith', undefined);
+    }
+
+    // Set readOnly
+    editor.setOption('readOnly', (mode === 'log'));
+    console.log('> readOnly ' + editor.getOption('readOnly'));
+
+    // Set lint options
+    if (preferences.useLint) {
+        switch(mode) {
+        case 'javascript':
+            if (typeof JSHINT === 'undefined') {
+                console.log('Loading JSHint');
+                $.getScript('/editor/static/codemirror-addon/lint/jshint.js', function () {
+                    $.getScript('/editor/static/codemirror-addon/lint/javascript-lint.js', function () {
+                        lintJavascript();
+                    });
+                });
+            } else {
+                lintJavascript();
+            }
+            break;
+        case 'application/json':
+            if (typeof jsonlint === 'undefined') {
+                console.log('Loading JSONLint');
+                $.getScript('/editor/static/codemirror-addon/lint/jsonlint.js', function () {
+                    $.getScript('/editor/static/codemirror-addon/lint/json-lint.js', function () {
+                        lintJson();
+                    });
+                });
+            } else {
+                lintJson();
+            }
+        break;
+        default:
+            lintClear ();
+        }
+    } else if (lintIsLoaded) {
+        lintClear();
+    } else {
+        console.log('> lint no action');
+    }
 }
 
 // Public API
@@ -226,12 +303,9 @@ function editorSetText(s, ext) {
     if (ext === undefined) {
         ext = 'txt';
     }
-    // Fix to ensure activeLine is updated when loading a new file
-//     editor.setValue(' ');
-//     editor.setCursor(0, 1);
-    // End fix
-    editor.setValue(s);
     editorSetMode(ext);
+    editorSetModeOptions();
+    editor.setValue(s);
     trackChanges(true);
 }
 
@@ -241,17 +315,15 @@ function editorGetText() {
 }
 
 function editorIsReadOnly() {
+    "use strict";
     return editor.getOption('readOnly');
-}
-
-function editorSetReadOnly(bReadOnly) {
-    editor.setOption('readOnly', bReadOnly);
 }
 // End public API
 
-var THEMES = ['default', 'night', 'solarized-light', 'solarized-dark'];
 
 // Manage preferences
+var THEMES = ['default', 'night', 'solarized-light', 'solarized-dark'];
+
 function applyTheme() {
     "use strict";
     var oldTheme = editor.getOption('theme'),
@@ -300,6 +372,7 @@ function applyTheme() {
 
 // See http://stackoverflow.com/questions/3164740/
 function addRule(background) {
+    "use strict";
     var sel = '.CodeMirror-activeline-background',
         val = 'background-color: ' + background + ' !important',
         rule, sheet, rules;
@@ -384,7 +457,7 @@ function applyLineNumbers() {
 
 function applyHighlightActive() {
     "use strict";
-//     console.log('applyHighlightActive ' + preferences.highlightActive);
+    // console.log('applyHighlightActive ' + preferences.highlightActive);
     editor.setOption('styleActiveLine', preferences.highlightActive);
 }
 
@@ -397,11 +470,58 @@ function applyLineWrapping() {
 function applyMatchBrackets() {
     "use strict";
     // console.log('applyMatchBrackets ' + preferences.matchBrackets);
-    editor.setOption('matchBrackets', preferences.matchBrackets);
+    if (editor.getOption('matchBrackets') === undefined) {
+        if (preferences.matchBrackets) {
+            // Load add-on only if enabled
+            console.log('Loading matchbrackets.js');
+            $.getScript('/editor/static/codemirror/addon/edit/matchbrackets.js', function () {
+                editor.setOption('matchBrackets', preferences.matchBrackets);
+            });
+        }
+    } else {
+        editor.setOption('matchBrackets', preferences.matchBrackets);
+    }
+}
+
+function applyCloseBrackets() {
+    "use strict";
+    // console.log('applyCloseBrackets ' + preferences.closeBrackets);
+    if (editor.getOption('autoCloseBrackets') === undefined) {
+        if (preferences.closeBrackets) {
+            // Load add-on only if enabled
+            console.log('Loading closebrackets.js');
+            $.getScript('/editor/static/codemirror/addon/edit/closebrackets.js', function () {
+                editor.setOption('autoCloseBrackets', preferences.closeBrackets);
+            });
+        }
+    } else {
+        editor.setOption('autoCloseBrackets', preferences.closeBrackets);
+    }
+}
+
+function applyUseLint() {
+    "use strict";
+    console.log('applyUseLint ' + preferences.useLint);
+    if (!lintIsLoaded) {
+        if (preferences.useLint) {
+            // Load add-ons only if enabled
+            console.log('Loading lint support');
+            $('head').append( $('<link rel="stylesheet" type="text/css" />')
+                .attr('href', '/editor/static/codemirror-addon/lint/lint.css') );
+            $.getScript('/editor/static/codemirror-addon/lint/lint.js', function () {
+//                 console.log('Loaded lint.js');
+                lintIsLoaded = true;
+                editorSetModeOptions();
+            });
+        }
+    } else {
+        editorSetModeOptions();
+    }
 }
 
 function setTheme() {
     "use strict";
+    /*jshint validthis: true */
     preferences.theme = $(this).val();
     prefs.apply.theme();
     // editor.refresh();   // CodeMirror needs this to recalculate layout
@@ -409,62 +529,86 @@ function setTheme() {
 
 function setFontSize() {
     "use strict";
+    /*jshint validthis: true */
     preferences.fontSize = $(this).val();
     prefs.apply.fontSize();
 }
 
 function setLineHeight() {
     "use strict";
+    /*jshint validthis: true */
     preferences.lineHeight = $(this).val();
     prefs.apply.lineHeight();
 }
 
 function setTabSize() {
     "use strict";
+    /*jshint validthis: true */
     preferences.tabSize = parseInt($(this).val(), 10);
     prefs.apply.tabSize();
 }
 
 function setSoftTabs() {
     "use strict";
+    /*jshint validthis: true */
     preferences.softTabs = $(this).is(':checked');
     prefs.apply.softTabs();
 }
 
 function setVisibleTabs() {
     "use strict";
+    /*jshint validthis: true */
     preferences.visibleTabs = $(this).is(':checked');
     prefs.apply.visibleTabs();
 }
 
 function setIndentUnit() {
     "use strict";
+    /*jshint validthis: true */
     preferences.indentUnit = parseInt($(this).val(), 10);
     prefs.apply.indentUnit();
 }
 
 function setLineNumbers() {
     "use strict";
+    /*jshint validthis: true */
     preferences.lineNumbers = $(this).is(':checked');
     prefs.apply.lineNumbers();
 }
 
 function setHighlightActive() {
     "use strict";
+    /*jshint validthis: true */
     preferences.highlightActive = $(this).is(':checked');
     prefs.apply.highlightActive();
 }
 
 function setLineWrapping() {
     "use strict";
+    /*jshint validthis: true */
     preferences.lineWrapping = $(this).is(':checked');
     prefs.apply.lineWrapping();
 }
 
 function setMatchBrackets() {
     "use strict";
+    /*jshint validthis: true */
     preferences.matchBrackets = $(this).is(':checked');
     prefs.apply.matchBrackets();
+}
+
+function setCloseBrackets() {
+    "use strict";
+    /*jshint validthis: true */
+    preferences.closeBrackets = $(this).is(':checked');
+    prefs.apply.closeBrackets();
+}
+
+function setUseLint() {
+    "use strict";
+    /*jshint validthis: true */
+    preferences.useLint = $(this).is(':checked');
+    prefs.apply.useLint();
 }
 
 function bindEditPreferences() {
@@ -513,9 +657,18 @@ function bindEditPreferences() {
         .each(function () {
             this.checked = preferences.matchBrackets;
         });
+    $('#closeBrackets').click(setCloseBrackets)
+        .each(function () {
+            this.checked = preferences.closeBrackets;
+        });
+    $('#useLint').click(setUseLint)
+        .each(function () {
+            this.checked = preferences.useLint;
+        });
 }
 
 function applyAll() {
+    "use strict";
     var pa = prefs.apply, f;
     for (f in pa) {
         if (pa.hasOwnProperty(f)) {
@@ -532,6 +685,7 @@ function savePreferences() {
 }
 
 function defaultPreferences() {
+    "use strict";
     var pd = prefs.defaults, p;
     for (p in pd) {
         if (pd.hasOwnProperty(p)) {

@@ -1,7 +1,8 @@
 /* Library dsmall 2012-13 v1.04 */
 // JSLint 6 Oct 2012 jQuery $
-
 // NB Event handlers need to be named and static to avoid duplication
+
+/*global $, console, document, XMLHttpRequest, alert, clearInterval, setInterval */
 
 var rascal = {
     // Add drag and drop to jquery.filetree
@@ -218,6 +219,7 @@ var rascal = {
                     ru.uploadFile(f);
                 } else {
                     ru.int_inFlight = clearInterval(ru.int_inFlight);
+                    ru.progress(100);
                     ru.complete(ru.directory);
                 }
             } else {
@@ -263,7 +265,7 @@ var rascal = {
                 }
             }
             if (ru.files.length > 0) {
-                ru.progress(100);
+                ru.progress(0);
                 ru.nextFile = -1;
                 // console.log('totalBytes ' + ru.totalBytes);
                 ru.uploadFiles();
@@ -275,19 +277,36 @@ var rascal = {
     directory: {
         directory: 'static/uploads',
         listID: 'filelist',
+        prefix: '',
+        transform: undefined,
+        delimiter: '<br />',
+        suffix: '',
+        complete: function () {
+            "use strict";
+            console.log('rascal.directory: complete');
+        },
         // Convert returned JSON object into an array, allowing use of join
         listDirectory: function () {
             "use strict";
             $.post("/list-directory", { directory: rascal.directory.directory }, function (response) {
-                var results = Array.prototype.slice.call($.parseJSON(response));
-                $('#' + rascal.directory.listID).html(results.join('<br />'));
+                var
+                    results = Array.prototype.slice.call($.parseJSON(response)),
+                    rd = rascal.directory,
+                    i;
+                if (rd.transform !== undefined) {
+                    for (i = 0; i < results.length; i += 1) {
+                        results[i] = rd.transform(results[i]);
+                    }
+                }
+                $('#' + rd.listID).html(rd.prefix + results.join(rd.delimiter) + rd.suffix);
+                rd.complete();
             }).error(function (jqXHR, textStatus, errorThrown) {
                 if (errorThrown === 'NOT FOUND') {
                     $('#' + rascal.directory.listID).html('Folder "' + rascal.directory.directory + '" not found');
                 }
             });
         },
-        // Clear directory then list it
+        // Clear directory, call completion function if there is one
         clearDirectory: function (cf) {
             "use strict";
             if (cf !== undefined) {

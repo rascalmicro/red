@@ -1,6 +1,15 @@
 /* UPLOAD WITH DRAG AND DROP */
 // Requires rascal-1.04
 
+/*jshint strict: true */
+/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
+/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
+/*global editorSetText, editorGetText, editorIsReadOnly, editorSetModeOptions */
+/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
+/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, displayTree */
+/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
+    anonymousTab, closeTab, getTabFromPath, switchToTab */
+
 function uploadComplete(directory) {
     "use strict";
     console.log('uploadComplete ' + ROOT + directory);
@@ -48,7 +57,6 @@ function uploadInit(files, dst) {
     ru.complete = uploadComplete;
     anonymousTab('upload status');
     editorSetText('', 'log');
-    console.log('Start readOnly ' + editorIsReadOnly());
     ru.filesDropped(files, dst.split(ROOT).pop());
 }
 

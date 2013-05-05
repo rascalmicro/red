@@ -1,6 +1,15 @@
 /* FILETREE EVENT HANDLERS */
 // See red-tabs.js for tab event handlers
 
+/*jshint strict: true */
+/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
+/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
+/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
+/*global showPicture, hidePicture */
+/*global querySave, QS_SAVE, QS_REVERT, queryDelete, QD_FILE, QD_FOLDER */
+/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
+    anonymousTab, closeTab, getTabFromPath, switchToTab */
+
 // Delegated event handler to enable/disable filetree file selection and the delete icon
 $('#filetree').on('mouseenter mouseleave', 'li.file', function (event) {
     "use strict";
@@ -25,7 +34,6 @@ $('#filetree').on('click', 'li.file > img', function (event) {
         fpath = path.split(ROOT).pop();
     console.log('DELETE click');
     queryDelete.init(QD_FILE, fpath, function (status) {
-        "use strict";
         if (status === 1) {
             console.log('DELETE ' + fpath);
             hidePicture();

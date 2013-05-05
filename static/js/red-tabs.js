@@ -23,16 +23,23 @@
 // When you close a tab and the editor has unsaved changes, the Save dialog
 // is shown with the options of Save, Cancel or Don't Save
 //
-// When you delete a file via list and there is a tab open for that file,
+// When you delete a file via the file list and there is a tab open for that file,
 // it is deleted (irrespective of whether the editor content has been changed)
+
+/*jshint strict: true */
+/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
+/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
+/*global editorSetText, editorGetText, editorIsReadOnly, editorSetModeOptions */
+/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, updateTitle,
+    displayTree, closeFile */
+/*global showPicture, hidePicture */
 
 // Tabbed editor instances keyed by tab ID
 // Model for instance (to be cloned)
 var INSTANCE = {
         fpath: '',
         doc: undefined,
-        bFileChanged: false,
-        bReadOnly: false
+        bFileChanged: false
     };
 
 var instances = {};
@@ -50,6 +57,7 @@ function setActiveKey(tab) {
 
 // Private function
 function addInstance(tab, fpath) {
+    "use strict";
     var i = $.extend({}, INSTANCE);
     i.fpath = fpath;
     instances[tab] = i;
@@ -59,24 +67,28 @@ function addInstance(tab, fpath) {
 
 // Only called from initEditor
 function initTabs() {
+    "use strict";
     addInstance('tab-1', '');
     switchToTab('');
 }
 
 // Change tracking
 function setFileChanged(what) {
+    "use strict";
     var tab = $('#editortabs li.filetab.active > a').attr('rel');
 //     console.log('> setFileChanged ' + tab + ' ' + what.toString());
     instances[tab].bFileChanged = what;
 }
 
 function getFileChanged() {
+    "use strict";
     var tab = $('#editortabs li.filetab.active > a').attr('rel');
 //     console.log('> getFileChanged ' + instances[tab].bFileChanged);
     return instances[tab].bFileChanged;
 }
 
 function getPath() {
+    "use strict";
     var tab = $('#editortabs li.filetab.active > a').attr('rel');
 //     console.log('> getPath ' + instances[tab].fpath);
     return instances[tab].fpath;
@@ -84,6 +96,7 @@ function getPath() {
 
 // Called from displayTree() after filetree click before revert, and by moveItem()
 function fileHasBeenChanged(fpath) {
+    "use strict";
     var tab, instance;
     for (tab in instances) {
         instance = instances[tab];
@@ -96,6 +109,7 @@ function fileHasBeenChanged(fpath) {
 
 // Called from moveItem after a move
 function updateLocation(tab, fpath) {
+    "use strict";
     $('#editortabs a[rel="' + tab + '"]')
         .attr('title', fpath)
         .text(fpath.split('/').pop());
@@ -125,7 +139,9 @@ function closeTab() {
 
 // Reuse or add an anonymous tab for messages
 function anonymousTab(name) {
-    if (tab = getTabFromPath('')) {
+    "use strict";
+    var tab = getTabFromPath('');
+    if (tab) {
         $('#editortabs a[rel="' + tab + '"]').tab('show');
     } else {
         tab = addTab('');
@@ -134,6 +150,7 @@ function anonymousTab(name) {
 }
 
 function getTabFromPath(fpath) {
+    "use strict";
     var tab, instance;
     for (tab in instances) {
         instance = instances[tab];
@@ -147,17 +164,17 @@ function getTabFromPath(fpath) {
 }
 
 function switchToTab(fpath) {
+    "use strict";
     var tab, instance;
     console.log('+ switchToTab for [' + fpath + ']');
-    if (tab = getTabFromPath(fpath)) {
+    if ((tab = getTabFromPath(fpath)) ){
         console.log('+ switchToTab found ' + tab);
         $('#editortabs a[rel="' + tab + '"]').tab('show');
-    } else if (tab = getTabFromPath('')) {
+    } else if ((tab = getTabFromPath(''))) {
         console.log('+ switchToTab reusing anonymous ' + tab);
-        instance = instances[tab]
+        instance = instances[tab];
         instance.fpath = fpath;
         instance.doc = undefined;
-        instances.bFileChanged = false;
         $('#editortabs a[rel="' + tab + '"]')
             .attr('title', fpath)
             .text(fpath.split('/').pop())
@@ -175,6 +192,7 @@ function switchToTab(fpath) {
 // Create tab for file fpath
 // If fpath is the empty string, it creates an anonymous tab
 function addTab(fpath) {
+    "use strict";
     var nextTab = $('li.filetab:last').clone(),
         lastID = nextTab.children('a').attr('rel'),
         nextID = 'tab-' + (parseInt(lastID.split('-').pop(), 10) + 1).toString(),
@@ -208,10 +226,9 @@ function tabShown(e) {
     hidePicture();
     // Disable highlight active line across swap
     editor.setOption('styleActiveLine', false);
-    prevInst.bReadOnly = editorIsReadOnly();
     prevInst.doc = editor.swapDoc(currInst.doc);
+    editorSetModeOptions();
     editor.setOption('styleActiveLine', preferences.highlightActive);
-    editorSetReadOnly(currInst.bReadOnly);
     editor.focus();
     updateTitle(currInst.fpath);
 //     setActiveKey(currKey);
@@ -221,6 +238,7 @@ function tabShown(e) {
 
 // Delegated default event handler when tab shown
 $('#editortabs').on('shown', 'a[data-toggle="tab"]', function (e) {
+    "use strict";
     tabShown(e);
 });
 

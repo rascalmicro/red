@@ -30,13 +30,22 @@
     <script src="/editor/static/js/log.js"></script>
     <script src="/editor/static/codemirror/mode/ruby/ruby.js"></script>
 
-    <!-- Search and match brackets support for CM versions from v3.01 -->
+    <!-- Add-on support for CM versions from v3.01 -->
     <script src="/editor/static/codemirror/addon/search/searchcursor.js"></script>
     <script src="/editor/static/codemirror/addon/search/search.js"></script>
     <link href="/editor/static/codemirror/addon/dialog/dialog.css" rel="stylesheet">
     <script src="/editor/static/codemirror/addon/dialog/dialog.js"></script>
-    <script src="/editor/static/codemirror/addon/edit/matchbrackets.js"></script>
     <script src="/editor/static/codemirror/addon/selection/active-line.js"></script>
+    <!-- <script src="/editor/static/codemirror/addon/edit/matchbrackets.js"></script> -->
+    <!-- <script src="/editor/static/codemirror/addon/edit/closebrackets.js"></script> -->
+
+    <!-- <script src="http://ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js"></script> -->
+    <!-- <script src="/editor/static/codemirror-addon/lint/jshint.js"></script> -->
+    <!-- <link rel="stylesheet" href="/editor/static/codemirror-addon/lint/lint.css"> -->
+    <!-- <script src="/editor/static/codemirror-addon/lint/lint.js"></script> -->
+    <!-- <script src="/editor/static/codemirror-addon/lint/javascript-lint.js"></script> -->
+    <!-- <script src="https://raw.github.com/zaach/jsonlint/79b553fb65c192add9066da64043458981b3972b/lib/jsonlint.js"></script> -->
+    <!-- <script src="/editor/static/codemirror-addon/lint/json-lint.js"></script> -->
 
     {% include "include/editor-scripts.html" %}
     <script src="/editor/static/js/jquery.filetree.js"></script>
@@ -328,7 +337,13 @@
                             <label class="checkbox">
                                 <input id="matchBrackets" type="checkbox" name="matchBrackets" />Match brackets
                             </label>
-                        </div> <!-- controls -->
+                            <label class="checkbox">
+                                <input id="closeBrackets" type="checkbox" name="closeBrackets" />Close brackets
+                            </label>
+                             <label class="checkbox">
+                                <input id="useLint" type="checkbox" name="useLint" />Use lint for JavaScript and JSON
+                            </label>
+                       </div> <!-- controls -->
                     </div> <!-- control-group -->
                 </fieldset>
             </form>

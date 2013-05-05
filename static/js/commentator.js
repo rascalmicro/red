@@ -4,7 +4,12 @@
 // Only add a single-line delimiter or multi-line delimiters, not both
 // Commentator only works on modes with comment delimiters set here
 // Note that html code is mode XML and javascript/jsonMode is ignored
+
+/*jshint strict: true */
+/*global CodeMirror console */
+
 function initCommentator() {
+    "use strict";
     CodeMirror.extendMode("xml", {
         commentStart: "<!-- ",
         commentEnd: " -->"
@@ -28,6 +33,7 @@ function initCommentator() {
 // Comment or uncomment a single line or block of code
 // Click on a line or make a selection, then type Cmd-/
 function commentator(cm) {
+    "use strict";
     var
         start = cm.getCursor('start'),
         end = cm.getCursor('end'),

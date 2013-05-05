@@ -1,6 +1,13 @@
 // Red tabbed editor with CodeMirror (1 May 2013)
-// JSLint 8 Oct 2012 jQuery $ rascal setPictureFrameSize editorSetText saveFile
-// saveMsg editorGetText savePreferences initPreferences defaultPreferences
+
+/*jshint strict: true */
+/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
+/*global editorSetText, editorGetText, editorIsReadOnly, editorSetModeOptions */
+/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
+/*global showPicture, hidePicture */
+/*global querySave, QS_SAVE, QS_REVERT, queryDelete, QD_FILE, QD_FOLDER */
+/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
+    anonymousTab, closeTab, getTabFromPath, switchToTab */
 
 // Editor globals (see also InitEditor and initPreferences)
 var ROOT;
@@ -13,6 +20,7 @@ var EXCEPTIONS = [];
 var DEFAULT_PICTURE = 'static/images/picture_help.png';
 
 function initExceptions () {
+    "use strict";
     EXCEPTIONS = [ROOT + 'server.py', ROOT + 'static/', ROOT + 'templates/'];
 }
 
@@ -163,6 +171,7 @@ function displayTree(path) {
 // Close a file, called after clicking the close icon on a file tab
 // Offer to save if file changed
 function closeFile() {
+    "use strict";
     if (!getFileChanged()) {
         closeTab();
     } else {

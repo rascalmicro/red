@@ -1,6 +1,14 @@
 /* DISPLAY PICTURES */
 // Requires rascal-1.04
 
+/*jshint strict: true */
+/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
+/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
+/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, updateTitle,
+    displayTree, closeFile */
+/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
+    anonymousTab, closeTab, getTabFromPath, switchToTab */
+
 function showPicture(path) {
     "use strict";
     var rp = rascal.picture,
@@ -22,7 +30,7 @@ function showPicture(path) {
     rp.container = 'photo-p';
     rp.caption = 'caption-p';
     rp.show(fpath);
-    updateTitle(fpath)
+    updateTitle(fpath);
 }
 
 function setPictureFrameSize(frp) {
@@ -42,6 +50,7 @@ function hidePicture() {
         rascal.picture.empty();
     }
     editor.focus();
+    updateTitle(getPath());
 }
 
 $('#frame-p').on('click', '.photo', function (event) {

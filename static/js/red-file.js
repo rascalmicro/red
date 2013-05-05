@@ -1,5 +1,15 @@
 /* FILE OPERATIONS */
 
+/*jshint strict: true */
+/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
+/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
+/*global editorSetText, editorGetText, editorIsReadOnly, editorSetModeOptions */
+/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, displayTree */
+/*global showPicture, hidePicture */
+/*global querySave, QS_SAVE, QS_REVERT, queryDelete, QD_FILE, QD_FOLDER */
+/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
+    anonymousTab, closeTab, getTabFromPath, switchToTab */
+
 // Move a file or folder (initiated by DnD), rename a file (initiated from dialog)
 //  moveItem /var/www/public/templates/foo.html /var/www/public/static/
 //  moveItem /var/www/public/static/empty/ /var/www/public/templates/
@@ -53,7 +63,7 @@ function moveItem(src, dst, copy) {
                 } else {
                     showPicture(dst + src.split('/').pop());
                 }
-            } else if (tab = getTabFromPath(srcFpath)) {
+            } else if ((tab = getTabFromPath(srcFpath))) {
                 if (bDstIsFile) {
                     if (fileHasBeenChanged(srcFpath)) {
                         unhighlightInTree(src);
@@ -87,7 +97,7 @@ function moveItem(src, dst, copy) {
 
 function saveProgress(pc) {
     "use strict";
-    console.log('progress ' + pc);
+    // console.log('progress ' + pc);
     $('#save-bar').css('width', pc + '%');
 }
 
@@ -111,7 +121,7 @@ function saveStatus(msg) {
         .css('color', 'red')
         .css('visibility', 'visible')
         .hide()
-        .fadeTo(500, 1)
+        .fadeTo(500, 1);
 }
 
 function saveComplete(directory) {
@@ -119,13 +129,15 @@ function saveComplete(directory) {
     $('#save-progress')
         .removeClass('active')
         .removeClass('progress-striped');
-    unhighlightChanged();
-    setFileChanged(false);
+    if (getFileChanged()) {
+        unhighlightChanged();
+        setFileChanged(false);
+    }
     if (querySave.status === 2) {
         querySave.status = 1;
     }
     saveMsg('Saved file');
-    console.log('saveComplete');
+    // console.log('saveComplete');
 }
 
 function saveInit(files, dst) {
@@ -163,9 +175,9 @@ function saveFile() {
         f = p.split('/').pop();
         dst = p.replace(f, '');
         blob = new Blob([s], {type: 'text'});
-        blob['name'] = f;
+        blob.name = f;
         files = { 0: blob, length: 1};
-        console.log(files);
+        // console.log(files);
         saveInit(files, dst);
     }
 }
