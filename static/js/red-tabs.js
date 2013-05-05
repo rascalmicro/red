@@ -175,6 +175,7 @@ function switchToTab(fpath) {
         instance = instances[tab];
         instance.fpath = fpath;
         instance.doc = undefined;
+        instance.bFileChanged = false;
         $('#editortabs a[rel="' + tab + '"]')
             .attr('title', fpath)
             .text(fpath.split('/').pop())
