@@ -1,16 +1,13 @@
 /* MODAL DIALOG HANDLING */
 
 /*jshint strict: true */
-/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
-/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
-/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, displayTree */
-/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, updateTitle,
-    displayTree, closeFile */
-/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
+/*global $, console, rascal */
+/*global ROOT, EXCEPTIONS, preferences */
+/*global displayTree */
+/*global saveMsg, moveItem */
 /*global initPreferences, defaultPreferences, savePreferences */
-/*global querySave, QS_SAVE, QS_REVERT, queryDelete, QD_FILE, QD_FOLDER */
-/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
-    anonymousTab, closeTab, getTabFromPath, switchToTab */
+/*global querySave, queryDelete */
+/*global getPath */
 
 // Create template
 var template_title = {

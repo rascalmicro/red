@@ -6,7 +6,7 @@
 // Note that html code is mode XML and javascript/jsonMode is ignored
 
 /*jshint strict: true */
-/*global CodeMirror console */
+/*global console, CodeMirror */
 
 function initCommentator() {
     "use strict";

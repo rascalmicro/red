@@ -27,12 +27,11 @@
 // it is deleted (irrespective of whether the editor content has been changed)
 
 /*jshint strict: true */
-/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
-/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
-/*global editorSetText, editorGetText, editorIsReadOnly, editorSetModeOptions */
-/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, updateTitle,
-    displayTree, closeFile */
-/*global showPicture, hidePicture */
+/*global $, console, CodeMirror */
+/*global DEFAULT_TEXT, editor, preferences */
+/*global editorSetModeOptions */
+/*global updateTitle, closeFile */
+/*global hidePicture */
 
 // Tabbed editor instances keyed by tab ID
 // Model for instance (to be cloned)

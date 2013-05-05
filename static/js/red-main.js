@@ -1,13 +1,12 @@
 // Red tabbed editor with CodeMirror (1 May 2013)
 
 /*jshint strict: true */
-/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
-/*global editorSetText, editorGetText, editorIsReadOnly, editorSetModeOptions */
-/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
+/*global $, window, document, console, rascal */
+/*global editorSetText */
+/*global saveMsg */
 /*global showPicture, hidePicture */
-/*global querySave, QS_SAVE, QS_REVERT, queryDelete, QD_FILE, QD_FOLDER */
-/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
-    anonymousTab, closeTab, getTabFromPath, switchToTab */
+/*global querySave, QS_SAVE, QS_REVERT */
+/*global setFileChanged, getFileChanged, getPath, switchToTab, fileHasBeenChanged, anonymousTab, closeTab */
 
 // Editor globals (see also InitEditor and initPreferences)
 var ROOT;

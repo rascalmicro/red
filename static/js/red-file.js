@@ -1,14 +1,14 @@
 /* FILE OPERATIONS */
 
 /*jshint strict: true */
-/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
-/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
-/*global editorSetText, editorGetText, editorIsReadOnly, editorSetModeOptions */
-/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, displayTree */
-/*global showPicture, hidePicture */
-/*global querySave, QS_SAVE, QS_REVERT, queryDelete, QD_FILE, QD_FOLDER */
-/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
-    anonymousTab, closeTab, getTabFromPath, switchToTab */
+/*global $, document, console, Blob, rascal */
+/*global ROOT, DEFAULT_TEXT */
+/*global editorGetText, editorIsReadOnly */
+/*global highlightInTree, unhighlightChanged, unhighlightInTree, displayTree */
+/*global showPicture */
+/*global querySave */
+/*global getTabFromPath, fileHasBeenChanged, updateLocation, setFileChanged, getFileChanged, getPath */
+
 
 // Move a file or folder (initiated by DnD), rename a file (initiated from dialog)
 //  moveItem /var/www/public/templates/foo.html /var/www/public/static/

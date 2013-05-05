@@ -2,13 +2,12 @@
 // Requires rascal-1.04
 
 /*jshint strict: true */
-/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
-/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
-/*global editorSetText, editorGetText, editorIsReadOnly, editorSetModeOptions */
-/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
-/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, displayTree */
-/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
-    anonymousTab, closeTab, getTabFromPath, switchToTab */
+/*global $, console, rascal */
+/*global ROOT, EXCEPTIONS */
+/*global editorSetText, editorGetText, editorIsReadOnly */
+/*global moveItem, saveMsg, saveProgress */
+/*global displayTree */
+/*global anonymousTab, closeTab */
 
 function uploadComplete(directory) {
     "use strict";

@@ -7,10 +7,9 @@
 // When status = 1 or 0, the wait ends and the callback function is executed
 
 /*jshint strict: true */
-/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
-/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
-/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
-    anonymousTab, closeTab, getTabFromPath, switchToTab */
+/*global $, console, setInterval, clearInterval */
+/*global saveFile */
+/*global getPath */
 
 // File save
 var QS_SAVE = 0,

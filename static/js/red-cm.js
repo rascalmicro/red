@@ -2,10 +2,10 @@
 // dsmall 27 Apr 2013 This version requires CodeMirror v3.1 or later
 
 /*jshint strict: true */
-/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
+/*global $, document, console, CodeMirror */
 /*global ROOT: true, HOME: true, DEFAULT_TEXT: true, editor: true, preferences: true, initExceptions */
-/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, fileChanged, displayTree */
-/*global moveItem, saveMsg, saveStatus, saveProgress, saveFile */
+/*global trackChanges, fileChanged */
+/*global saveMsg, saveStatus */
 /*global commentator, initCommentator */
 /*global initTabs */
 
@@ -112,8 +112,6 @@ function initEditor(root, home, default_text) {
     console.log('Root: ' + ROOT);
     console.log('Home: ' + HOME);
     console.log('Default text: ' + DEFAULT_TEXT);
-    // The next line fixes a dangerous bug in Firefox Mac 18.0.2
-    $('#path').val('');
     trackChanges(false);
     editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         mode: 'text', // text mode doesn't exist explicitly, but setting it provokes plain text by default

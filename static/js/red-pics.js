@@ -2,12 +2,10 @@
 // Requires rascal-1.04
 
 /*jshint strict: true */
-/*global $, window, document, console, setInterval, clearInterval, Blob, rascal, CodeMirror */
-/*global ROOT, HOME, DEFAULT_TEXT, DEFAULT_PICTURE, EXCEPTIONS, editor, preferences */
-/*global trackChanges, highlightInTree, unhighlightChanged, unhighlightInTree, updateTitle,
-    displayTree, closeFile */
-/*global setFileChanged, getFileChanged, getPath, fileHasBeenChanged, updateLocation,
-    anonymousTab, closeTab, getTabFromPath, switchToTab */
+/*global $, console, rascal */
+/*global ROOT, HOME, DEFAULT_PICTURE, editor */
+/*global updateTitle */
+/*global getPath */
 
 function showPicture(path) {
     "use strict";
