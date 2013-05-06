@@ -64,7 +64,7 @@ function initRascalDnd() {
     "use strict";
     var rd = rascal.dnd;
     rd.root = ROOT;
-    rd.container = 'filetree';
+    rd.containerID = 'filetree';
     rd.notDraggable = EXCEPTIONS;
     rd.itemDropped = moveItem;
     rd.filesDropped = uploadInit;

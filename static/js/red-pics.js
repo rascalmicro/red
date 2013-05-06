@@ -25,8 +25,8 @@ function showPicture(path) {
     }
     // Set up picture
     rp.imgRoot = HOME;
-    rp.container = 'photo-p';
-    rp.caption = 'caption-p';
+    rp.containerID = 'photo-p';
+    rp.captionID = 'caption-p';
     rp.show(fpath);
     updateTitle(fpath);
 }
