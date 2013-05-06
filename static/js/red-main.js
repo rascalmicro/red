@@ -6,7 +6,8 @@
 /*global saveMsg */
 /*global showPicture, hidePicture */
 /*global querySave, QS_SAVE, QS_REVERT */
-/*global setFileChanged, getFileChanged, getPath, switchToTab, fileHasBeenChanged, anonymousTab, closeTab */
+/*global setFileChanged, getFileChanged, getPath, switchToTab, fileHasBeenChanged,
+        anonymousTab, closeTab, closeAllBut */
 
 // Editor globals (see also InitEditor and initPreferences)
 var ROOT;
@@ -169,9 +170,12 @@ function displayTree(path) {
 
 // Close a file, called after clicking the close icon on a file tab
 // Offer to save if file changed
-function closeFile() {
+function closeFile(meta) {
     "use strict";
-    if (!getFileChanged()) {
+    // console.log('tab close meta ' + meta);
+    if (meta) {
+        closeAllBut();
+    } else if (!getFileChanged()) {
         closeTab();
     } else {
         querySave.init(QS_SAVE, function (status) {

@@ -15,6 +15,7 @@ red with tabs
 * The preferred way to dismiss a picture is by clicking it.
 * You can open a page from the filetree with Cmd-Click. See `click-test.html` for more information.
 * Support for match brackets, close brackets and lint is loaded on demand
+* red help (new icon)
 
 #### DONE
 
@@ -29,6 +30,9 @@ red with tabs
 * Reload pytronics
 * Close brackets (preference)
 * Lint for JavaScript and JSON (preference)
+* Incorporated latest CM fixes for lint gutter (requires this [CM commit][cm])
+* Close all but this tab
+* Added red help
 
 #### KNOWN ISSUES
 
@@ -37,7 +41,6 @@ red with tabs
 
 #### UNDER CONSIDERATION
 
-* Close all but this tab
 * Save all
 * Make "jsDocstring" a preference 
 * Drag width of filetree
@@ -45,4 +48,6 @@ red with tabs
 * Display fonts as page from font book 
 
 --
-Last update 5 May 2013
+Last update 6 May 2013
+
+[cm]: https://github.com/marijnh/CodeMirror/commit/a48b5d71cd30c58808f359a9c604dac89d9b2ba6

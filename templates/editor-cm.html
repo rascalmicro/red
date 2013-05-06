@@ -8,6 +8,7 @@
     {% include "include/editor-head.html" %}
 
     <link rel="stylesheet" type="text/css" href="/editor/static/css/red.css">
+    <link rel="stylesheet" type="text/css" href="/editor/static/css/red-help.css">
     <link rel="stylesheet" type="text/css" href="/editor/static/css/jquery.filetree.css">
 
     <link rel="stylesheet" type="text/css" href="/editor/static/codemirror/lib/codemirror.css">
@@ -81,7 +82,7 @@
     </style>
 </head>
 
-<body>
+<body class="macintosh">
     {% include "include/editor-topbar.html" %}
 
     <div class="container-fluid">
@@ -127,10 +128,11 @@
                     <div id="filetree" class="filetree-default">&nbsp;</div>
                 </div><!--/.well -->
                 <div id="new-file-folder-bar" class="well rascal rm-well-default">
-                    <img id="new-template" src="/editor/static/images/oxygen-new-file-32x32.png" title="Create a template or file" />
-                    <img id="new-folder" src="/editor/static/images/oxygen-new-folder-32x32.png" title="Create a folder" />
-                    <img id="rename-file" src="/editor/static/images/oxygen-rename-file-32x32.png" title="Rename or copy a file" />
-                    <img id="preferences" src="/editor/static/images/oxygen-actions-32x32.png" title="Set editor preferences" />
+                    <img id="new-template" class="red-icon" src="/editor/static/images/oxygen-new-file-32x32.png" title="Create a template or file" />
+                    <img id="new-folder" class="red-icon" src="/editor/static/images/oxygen-new-folder-32x32.png" title="Create a folder" />
+                    <img id="rename-file" class="red-icon" src="/editor/static/images/oxygen-rename-file-32x32.png" title="Rename or copy a file" />
+                    <img id="help" class="red-icon" src="/editor/static/images/oxygen-help-hint-32x32.png" title="Show help" />
+                    <img id="preferences" class="red-icon" src="/editor/static/images/oxygen-actions-32x32.png" title="Set editor preferences" />
                 </div><!--/.well -->
             </div>
             <div class="span9">
@@ -354,6 +356,9 @@
             <a id="prefs-save" href="#" class="btn btn-danger">Save</a>
         </div>
     </div>
+
+    {% include "include/editor-help.html" %}
+
     <!-- /modal dialogues -->
 
     <script src="/editor/static/js/red-tabs.js"></script>

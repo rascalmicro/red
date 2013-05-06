@@ -1,0 +1,81 @@
+/* css for red help modal */
+dl {
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+}
+dl.keyboard-mappings {
+    margin: 5px 0;
+    font-size: 14px;
+}
+dl.keyboard-mappings dt {
+    display: inline-block;
+    margin: 0;
+    padding: 3px 6px;
+    min-width: 10px;
+    text-align: center;
+    font-family: Monaco, "Liberation Mono", Courier, monospace;
+    /* background: #333; */
+    background: #444;
+    color: #EEE;
+    border-radius: 2px;
+    text-shadow: 1px 1px 0 #000;
+    font-size: 12px;
+}
+dl.keyboard-mappings dt.primary {
+    /* background-color: #0044cc; */
+    background-color: #003bb3;
+}
+dl.keyboard-mappings dt.warning {
+    /* background-color: #f89406; */
+    background-color: #df8505;
+}
+dl.keyboard-mappings dt.danger {
+    /* background-color: #bd362f; */
+    background-color: #a9302a
+}
+dl.keyboard-mappings dt.success {
+    /* background-color: #51a351; */
+    background-color: #499249;
+}
+dl.keyboard-mappings dt.info {
+    /* background-color: #2f96b4; */
+    background-color: #2a85a0;
+}
+dl.keyboard-mappings dt.inverse {
+    /* background-color: #222222; */
+    background-color: #151515;
+}
+dl.keyboard-mappings dt img {
+    /* margin-right: 3px; */
+    /* margin-top: 2px; */
+    width: 11px;
+}
+dl.keyboard-mappings dt em {
+    /* padding: 0 4px; */
+    padding: 0;
+    color: #999;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 10px;
+    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    text-shadow: none;
+}
+dl.keyboard-mappings dd {
+    display: inline;
+    margin: 0 0 0 5px;
+    color: #666;
+}
+.macintosh dl.keyboard-mappings .platform-mac {
+    display: inline;
+}
+.macintosh dl.keyboard-mappings .platform-other {
+    display: none;
+}
+div.modal-subheading {
+    padding: 0 2px;
+    font-weight: bold;
+    background-color: #f5f5f5;
+}

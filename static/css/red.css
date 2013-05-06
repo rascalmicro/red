@@ -147,7 +147,16 @@ a[draggable=true] {
 }
 
 /* icon bar */
-#preferences {
+.red-icon {
+    opacity: 0.8;
+}
+
+.red-icon:hover {
+    opacity: 1.0;
+    /* background-color: white; */
+}
+
+#preferences, #help {
     float: right;
 }
 

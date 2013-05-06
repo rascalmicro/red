@@ -136,6 +136,23 @@ function closeTab() {
     candidate.remove();
 }
 
+// Close all unchanged but active tab
+function closeAllBut () {
+    "use strict";
+    var candidate = $('#editortabs li.filetab.active'),
+        key = candidate.children('a').attr('rel'),
+        tab,
+        instance;
+    for (tab in instances) {
+        if ((tab !== key) && (!instances[tab].bFileChanged)) {
+            delete instances[tab];
+            $('#editortabs a[rel="' + tab + '"]')
+                .parent()
+                .remove();
+        }
+    }
+}
+
 // Reuse or add an anonymous tab for messages
 function anonymousTab(name) {
     "use strict";
@@ -262,8 +279,8 @@ $('#editortabs').on('mouseenter mouseleave', 'li.filetab', function (event) {
 // Delegated event handler for clicking the filetab close icon
 $('#editortabs').on('click', 'li.filetab > img', function (event) {
     "use strict";
-//     var key = $(this).parent().children('a').attr('rel');
-//     console.log('Closing ' + key);
-    closeFile();
+    // var key = $(this).parent().children('a').attr('rel');
+    // console.log('Closing ' + key);
+    closeFile(event.metaKey || event.ctrlKey || event.shiftKey);
 });
 /* END SUPPORT FOR TABS */

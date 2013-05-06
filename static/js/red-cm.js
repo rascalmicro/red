@@ -88,8 +88,9 @@ function formatJSON(cm) {
         try {
             s = cm.getValue();
             o = JSON.parse(s);
-            t = JSON.stringify(o, null, cm.getOption('tabSize'));
-            if (t === s) {
+            // t = JSON.stringify(o, null, cm.getOption('tabSize'));
+            t = JSON.stringify(o, null, 2);
+           if (t === s) {
                 saveMsg('Checked JSON');
             } else {
                 saveMsg('Formatted JSON');
@@ -264,7 +265,7 @@ function editorSetModeOptions () {
             if (typeof JSHINT === 'undefined') {
                 console.log('Loading JSHint');
                 $.getScript('/editor/static/codemirror-addon/lint/jshint.js', function () {
-                    $.getScript('/editor/static/codemirror-addon/lint/javascript-lint.js', function () {
+                    $.getScript('/editor/static/codemirror/addon/lint/javascript-lint.js', function () {
                         lintJavascript();
                     });
                 });
@@ -276,7 +277,7 @@ function editorSetModeOptions () {
             if (typeof jsonlint === 'undefined') {
                 console.log('Loading JSONLint');
                 $.getScript('/editor/static/codemirror-addon/lint/jsonlint.js', function () {
-                    $.getScript('/editor/static/codemirror-addon/lint/json-lint.js', function () {
+                    $.getScript('/editor/static/codemirror/addon/lint/json-lint.js', function () {
                         lintJson();
                     });
                 });
@@ -505,8 +506,8 @@ function applyUseLint() {
             // Load add-ons only if enabled
             console.log('Loading lint support');
             $('head').append( $('<link rel="stylesheet" type="text/css" />')
-                .attr('href', '/editor/static/codemirror-addon/lint/lint.css') );
-            $.getScript('/editor/static/codemirror-addon/lint/lint.js', function () {
+                .attr('href', '/editor/static/codemirror/addon/lint/lint.css') );
+            $.getScript('/editor/static/codemirror/addon/lint/lint.js', function () {
 //                 console.log('Loaded lint.js');
                 lintIsLoaded = true;
                 editorSetModeOptions();

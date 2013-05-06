@@ -321,4 +321,24 @@ $('#delete-cancel').click(function (e) {
     queryDelete.status = 0;
     $('#modal-d').modal('hide');
 });
+
+// red help
+$('#help').click(function () {
+    "use strict";
+    // Make this modal wider than standard
+    var modal_h = $('#modal-h'),
+        ml = modal_h.css('margin-left'),
+        w = modal_h.css('width'),
+        dw = 80;
+    modal_h
+        .css('margin-left', (parseInt(ml, 10) - (dw / 2)) + 'px')
+        .css('width', (parseInt(w, 10) + dw) + 'px')
+        .modal('show');
+});
+
+$('#help-close').click(function (e) {
+    "use strict";
+    e.preventDefault();
+    $('#modal-h').modal('hide');
+});
 /* END OF MODAL DIALOG HANDLING */
