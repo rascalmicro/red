@@ -137,7 +137,7 @@ function closeTab() {
 }
 
 // Close all unchanged tabs except for active tab
-// Thanks to Andrew Small (Oxford UK) for suggesting this
+// Thanks to Andrew Small for suggesting this
 function closeAllBut () {
     "use strict";
     var candidate = $('#editortabs li.filetab.active'),
