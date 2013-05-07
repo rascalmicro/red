@@ -1,11 +1,5 @@
-/* css for red help modal */
-dl {
-    display: block;
-    -webkit-margin-before: 1em;
-    -webkit-margin-after: 1em;
-    -webkit-margin-start: 0px;
-    -webkit-margin-end: 0px;
-}
+/* css for red help modal - inspired by git hub */
+
 dl.keyboard-mappings {
     margin: 5px 0;
     font-size: 14px;
@@ -67,6 +61,9 @@ dl.keyboard-mappings dd {
     display: inline;
     margin: 0 0 0 5px;
     color: #666;
+}
+dl.keyboard-mappings .platform-mac {
+    display: none;
 }
 .macintosh dl.keyboard-mappings .platform-mac {
     display: inline;

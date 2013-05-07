@@ -82,7 +82,7 @@
     </style>
 </head>
 
-<body class="macintosh">
+<body>
     {% include "include/editor-topbar.html" %}
 
     <div class="container-fluid">
@@ -416,6 +416,10 @@
                     adjustGeometry();
                 }, 500);
             });
+            // Set up signal for Red Help to show appropriate meta keys
+            if (navigator.platform.indexOf('Mac') !== -1) {
+                $('body').addClass('macintosh');
+            }
         });
     </script>
   </body>
