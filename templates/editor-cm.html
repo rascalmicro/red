@@ -8,6 +8,7 @@
     {% include "include/editor-head.html" %}
 
     <link rel="stylesheet" type="text/css" href="/editor/static/css/red.css">
+    <link rel="stylesheet" type="text/css" href="/editor/static/css/red-help.css">
     <link rel="stylesheet" type="text/css" href="/editor/static/css/jquery.filetree.css">
 
     <link rel="stylesheet" type="text/css" href="/editor/static/codemirror/lib/codemirror.css">
@@ -30,13 +31,22 @@
     <script src="/editor/static/js/log.js"></script>
     <script src="/editor/static/codemirror/mode/ruby/ruby.js"></script>
 
-    <!-- Search and match brackets support for CM versions from v3.01 -->
+    <!-- Add-on support for CM versions from v3.01 -->
     <script src="/editor/static/codemirror/addon/search/searchcursor.js"></script>
     <script src="/editor/static/codemirror/addon/search/search.js"></script>
     <link href="/editor/static/codemirror/addon/dialog/dialog.css" rel="stylesheet">
     <script src="/editor/static/codemirror/addon/dialog/dialog.js"></script>
-    <script src="/editor/static/codemirror/addon/edit/matchbrackets.js"></script>
     <script src="/editor/static/codemirror/addon/selection/active-line.js"></script>
+    <!-- <script src="/editor/static/codemirror/addon/edit/matchbrackets.js"></script> -->
+    <!-- <script src="/editor/static/codemirror/addon/edit/closebrackets.js"></script> -->
+
+    <!-- <script src="http://ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js"></script> -->
+    <!-- <script src="/editor/static/codemirror-addon/lint/jshint.js"></script> -->
+    <!-- <link rel="stylesheet" href="/editor/static/codemirror-addon/lint/lint.css"> -->
+    <!-- <script src="/editor/static/codemirror-addon/lint/lint.js"></script> -->
+    <!-- <script src="/editor/static/codemirror-addon/lint/javascript-lint.js"></script> -->
+    <!-- <script src="https://raw.github.com/zaach/jsonlint/79b553fb65c192add9066da64043458981b3972b/lib/jsonlint.js"></script> -->
+    <!-- <script src="/editor/static/codemirror-addon/lint/json-lint.js"></script> -->
 
     {% include "include/editor-scripts.html" %}
     <script src="/editor/static/js/jquery.filetree.js"></script>
@@ -118,10 +128,11 @@
                     <div id="filetree" class="filetree-default">&nbsp;</div>
                 </div><!--/.well -->
                 <div id="new-file-folder-bar" class="well rascal rm-well-default">
-                    <img id="new-template" src="/editor/static/images/oxygen-new-file-32x32.png" title="Create a template or file" />
-                    <img id="new-folder" src="/editor/static/images/oxygen-new-folder-32x32.png" title="Create a folder" />
-                    <img id="rename-file" src="/editor/static/images/oxygen-rename-file-32x32.png" title="Rename or copy a file" />
-                    <img id="preferences" src="/editor/static/images/oxygen-actions-32x32.png" title="Set editor preferences" />
+                    <img id="new-template" class="red-icon" src="/editor/static/images/oxygen-new-file-32x32.png" title="Create a template or file" />
+                    <img id="new-folder" class="red-icon" src="/editor/static/images/oxygen-new-folder-32x32.png" title="Create a folder" />
+                    <img id="rename-file" class="red-icon" src="/editor/static/images/oxygen-rename-file-32x32.png" title="Rename or copy a file" />
+                    <img id="help" class="red-icon" src="/editor/static/images/oxygen-help-hint-32x32.png" title="Show help" />
+                    <img id="preferences" class="red-icon" src="/editor/static/images/oxygen-actions-32x32.png" title="Set editor preferences" />
                 </div><!--/.well -->
             </div>
             <div class="span9">
@@ -328,7 +339,13 @@
                             <label class="checkbox">
                                 <input id="matchBrackets" type="checkbox" name="matchBrackets" />Match brackets
                             </label>
-                        </div> <!-- controls -->
+                            <label class="checkbox">
+                                <input id="closeBrackets" type="checkbox" name="closeBrackets" />Close brackets
+                            </label>
+                             <label class="checkbox">
+                                <input id="useLint" type="checkbox" name="useLint" />Use lint for JavaScript and JSON
+                            </label>
+                       </div> <!-- controls -->
                     </div> <!-- control-group -->
                 </fieldset>
             </form>
@@ -339,6 +356,9 @@
             <a id="prefs-save" href="#" class="btn btn-danger">Save</a>
         </div>
     </div>
+
+    {% include "include/editor-help.html" %}
+
     <!-- /modal dialogues -->
 
     <script src="/editor/static/js/red-tabs.js"></script>
@@ -396,6 +416,10 @@
                     adjustGeometry();
                 }, 500);
             });
+            // Set up signal for Red Help to show appropriate meta keys
+            if (navigator.platform.indexOf('Mac') !== -1) {
+                $('body').addClass('macintosh');
+            }
         });
     </script>
   </body>

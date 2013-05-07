@@ -3,7 +3,7 @@ from flask.ext.login import (LoginManager, current_user, login_required,
                             login_user, logout_user, UserMixin, AnonymousUser,
                             confirm_login, fresh_login_required)
 from jinja2 import TemplateNotFound
-from werkzeug import secure_filename
+# from werkzeug import secure_filename
 
 # Support multiple environments
 (RASCAL, MAC, WINDOWS) = (range(0, 3))
@@ -413,8 +413,8 @@ def xupload_file():
         try:
             # Check file type and folder
             print '>>> xupload name raw ' + request.headers['X-File-Name']
-#             filename = secure_path(request.headers['X-File-Name'])
-            filename = secure_filename(request.headers['X-File-Name'])
+            filename = secure_path(request.headers['X-File-Name'])
+#             filename = secure_filename(request.headers['X-File-Name'])
             print '>>> xupload name cooked ' + filename
             try:
                 allowAll = (request.headers['X-AllowAll'] == 'true')

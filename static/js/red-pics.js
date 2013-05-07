@@ -1,6 +1,12 @@
 /* DISPLAY PICTURES */
 // Requires rascal-1.04
 
+/*jshint strict: true */
+/*global $, console, rascal */
+/*global ROOT, HOME, DEFAULT_PICTURE, editor */
+/*global updateTitle */
+/*global getPath */
+
 function showPicture(path) {
     "use strict";
     var rp = rascal.picture,
@@ -19,10 +25,10 @@ function showPicture(path) {
     }
     // Set up picture
     rp.imgRoot = HOME;
-    rp.container = 'photo-p';
-    rp.caption = 'caption-p';
+    rp.containerID = 'photo-p';
+    rp.captionID = 'caption-p';
     rp.show(fpath);
-    updateTitle(fpath)
+    updateTitle(fpath);
 }
 
 function setPictureFrameSize(frp) {
@@ -42,6 +48,7 @@ function hidePicture() {
         rascal.picture.empty();
     }
     editor.focus();
+    updateTitle(getPath());
 }
 
 $('#frame-p').on('click', '.photo', function (event) {

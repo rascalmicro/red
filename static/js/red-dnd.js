@@ -1,6 +1,14 @@
 /* UPLOAD WITH DRAG AND DROP */
 // Requires rascal-1.04
 
+/*jshint strict: true */
+/*global $, console, rascal */
+/*global ROOT, EXCEPTIONS */
+/*global editorSetText, editorGetText, editorIsReadOnly */
+/*global moveItem, saveMsg, saveProgress */
+/*global displayTree */
+/*global anonymousTab, closeTab */
+
 function uploadComplete(directory) {
     "use strict";
     console.log('uploadComplete ' + ROOT + directory);
@@ -48,7 +56,6 @@ function uploadInit(files, dst) {
     ru.complete = uploadComplete;
     anonymousTab('upload status');
     editorSetText('', 'log');
-    console.log('Start readOnly ' + editorIsReadOnly());
     ru.filesDropped(files, dst.split(ROOT).pop());
 }
 
@@ -57,7 +64,7 @@ function initRascalDnd() {
     "use strict";
     var rd = rascal.dnd;
     rd.root = ROOT;
-    rd.container = 'filetree';
+    rd.containerID = 'filetree';
     rd.notDraggable = EXCEPTIONS;
     rd.itemDropped = moveItem;
     rd.filesDropped = uploadInit;
