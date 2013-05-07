@@ -217,13 +217,16 @@
             </tr>
         </tbody>
         </table>
-        <p><small>Last update 18 September 2012</small></p>
+        <p><small>Last update 7 May 2013</small></p>
     </div> <!-- /container -->
     <script language="javascript" type="text/javascript">
         function setTheme(theme) {
             $('.btn-group button').removeClass('active');
             $('#th-' + theme).addClass('active');
-            $('body').removeClass().addClass('cm-s-' + theme);
+            $('body')
+                .removeClass()
+                .addClass('cm-s-' + theme)
+                .addClass('CodeMirror');
         }
 
         function setEditor (editor) {
