@@ -6,6 +6,11 @@
 // status = 1 for don't save and 0 for cancel
 // When status = 1 or 0, the wait ends and the callback function is executed
 
+/*jshint strict: true */
+/*global $, console, setInterval, clearInterval */
+/*global saveFile */
+/*global getPath */
+
 // File save
 var QS_SAVE = 0,
     QS_REVERT = 1;

@@ -1,4 +1,14 @@
 /* MODAL DIALOG HANDLING */
+
+/*jshint strict: true */
+/*global $, console, rascal */
+/*global ROOT, EXCEPTIONS, preferences */
+/*global displayTree */
+/*global saveMsg, moveItem */
+/*global initPreferences, defaultPreferences, savePreferences */
+/*global querySave, queryDelete */
+/*global getPath */
+
 // Create template
 var template_title = {
     html: 'Create a new template',
@@ -48,12 +58,13 @@ $('#modal-t').on('shown', function () {
     $('#template-name').focus();
 });
 
-$('#template-create').click(function () {
+$('#template-create').click(function (e) {
     "use strict";
     var
         templateName = $('#template-name').val().trim(),
         templateOption = $('#template-radios input:radio:checked').attr('value'),
         path;
+    e.preventDefault();
     if (templateName !== '') {
         // If no extension provided, add one for files in the templates folder
         if (templateName.indexOf('.') === -1) {
@@ -115,8 +126,9 @@ $('#template-radios input:radio').click(function () {
     $('#template-name').focus();
 });
 
-$('#template-cancel').click(function () {
+$('#template-cancel').click(function (e) {
     "use strict";
+    e.preventDefault();
     $('#modal-t').modal('hide');
 });
 
@@ -134,10 +146,11 @@ $('#modal-f').on('shown', function () {
     $('#folder-name').focus();
 });
 
-$('#folder-create').click(function () {
+$('#folder-create').click(function (e) {
     "use strict";
     var folderName = $('#folder-name').val().trim();
-    if (folderName !== '') {
+     e.preventDefault();
+   if (folderName !== '') {
         $.post('/editor/new_folder', { folderName: folderName }, function (response) {
             console.log(response);
             displayTree(ROOT + 'static/');
@@ -158,8 +171,9 @@ $('#folder-create').click(function () {
     }
 });
 
-$('#folder-cancel').click(function () {
+$('#folder-cancel').click(function (e) {
     "use strict";
+    e.preventDefault();
     $('#modal-f').modal('hide');
 });
 
@@ -211,18 +225,21 @@ function renameOrCopy (copy) {
     }
 }
 
-$('#rename-yes').click(function () {
+$('#rename-yes').click(function (e) {
     "use strict";
+    e.preventDefault();
     renameOrCopy(false);
 });
 
-$('#rename-copy').click(function () {
+$('#rename-copy').click(function (e) {
     "use strict";
+    e.preventDefault();
     renameOrCopy(true);
 });
 
-$('#rename-cancel').click(function () {
+$('#rename-cancel').click(function (e) {
     "use strict";
+    e.preventDefault();
     $('#modal-n').modal('hide');
 });
 
@@ -233,65 +250,95 @@ $('#preferences').click(function () {
     console.log('Preferences ' + JSON.stringify(preferences));
 });
 
-$('#prefs-save').click(function () {
+$('#prefs-save').click(function (e) {
     "use strict";
+    e.preventDefault();
     $('#modal-p').modal('hide');
     savePreferences();
 });
 
-$('#prefs-cancel').click(function () {
+$('#prefs-cancel').click(function (e) {
     "use strict";
+    e.preventDefault();
     $('#modal-p').modal('hide');
     initPreferences();
 });
 
-$('#prefs-defaults').click(function () {
+$('#prefs-defaults').click(function (e) {
     "use strict";
+    e.preventDefault();
     defaultPreferences();
 });
 
-$('#save-yes').click(function () {
+$('#save-yes').click(function (e) {
     "use strict";
+    e.preventDefault();
     querySave.status = 3;
     $('#modal-s').modal('hide');
 });
 
 // Query save
-$('#save-no').click(function () {
+$('#save-no').click(function (e) {
     "use strict";
+    e.preventDefault();
     querySave.status = 1;
     $('#modal-s').modal('hide');
 });
 
-$('#save-cancel').click(function () {
+$('#save-cancel').click(function (e) {
     "use strict";
+    e.preventDefault();
     querySave.status = 0;
     $('#modal-s').modal('hide');
 });
 
 // Revert file
-$('#revert-yes').click(function () {
+$('#revert-yes').click(function (e) {
     "use strict";
+    e.preventDefault();
     querySave.status = 1;
     $('#modal-r').modal('hide');
 });
 
-$('#revert-cancel').click(function () {
+$('#revert-cancel').click(function (e) {
     "use strict";
+    e.preventDefault();
     querySave.status = 0;
     $('#modal-r').modal('hide');
 });
 
 // Delete file or folder
-$('#delete-yes').click(function () {
+$('#delete-yes').click(function (e) {
     "use strict";
+    e.preventDefault();
     queryDelete.status = 1;
     $('#modal-d').modal('hide');
 });
 
-$('#delete-cancel').click(function () {
+$('#delete-cancel').click(function (e) {
     "use strict";
+    e.preventDefault();
     queryDelete.status = 0;
     $('#modal-d').modal('hide');
+});
+
+// red help
+$('#help').click(function () {
+    "use strict";
+    // Make this modal wider than standard
+    var modal_h = $('#modal-h'),
+        ml = modal_h.css('margin-left'),
+        w = modal_h.css('width'),
+        dw = 80;
+    modal_h
+        .css('margin-left', (parseInt(ml, 10) - (dw / 2)) + 'px')
+        .css('width', (parseInt(w, 10) + dw) + 'px')
+        .modal('show');
+});
+
+$('#help-close').click(function (e) {
+    "use strict";
+    e.preventDefault();
+    $('#modal-h').modal('hide');
 });
 /* END OF MODAL DIALOG HANDLING */
