@@ -118,12 +118,13 @@ function updateLocation(tab, fpath) {
 /* PUBLIC AND PRIVATE */
 
 // Close active tab
-// With filetree deletion, could be last tab
+// Animate unless closing right-most tab
 function closeTab() {
     "use strict";
     var candidate = $('#editortabs li.filetab.active'),
         key = candidate.children('a').attr('rel'),
-        replacement= candidate.prev();
+        replacement = candidate.prev(),
+        animate = (key !== $('#editortabs li.filetab:last').children('a').attr('rel'));
     if (replacement.length === 0) {
         replacement = candidate.next();
         if (replacement.length === 0) {
@@ -133,7 +134,13 @@ function closeTab() {
     }
     replacement.children('a').tab('show');
     delete instances[key];
-    candidate.remove();
+    if (animate) {
+        candidate.hide('fast', function () {
+            $(this).remove();
+        });
+    } else {
+        candidate.remove();
+    }
 }
 
 // Close all unchanged tabs except for active tab
@@ -143,13 +150,22 @@ function closeAllBut () {
     var candidate = $('#editortabs li.filetab.active'),
         key = candidate.children('a').attr('rel'),
         tab,
-        instance;
+        instance,
+        animate = true;
     for (tab in instances) {
         if ((tab !== key) && (!instances[tab].bFileChanged)) {
             delete instances[tab];
-            $('#editortabs a[rel="' + tab + '"]')
-                .parent()
-                .remove();
+            if (animate) {
+                $('#editortabs a[rel="' + tab + '"]')
+                    .parent()
+                    .hide('fast', function () {
+                        $(this).remove();
+                    });
+            } else {
+                $('#editortabs a[rel="' + tab + '"]')
+                    .parent()
+                    .remove();
+            }
         }
     }
 }
@@ -182,7 +198,7 @@ function getTabFromPath(fpath) {
 
 function switchToTab(fpath) {
     "use strict";
-    var tab, instance;
+    var tab, instance, apath;
     console.log('+ switchToTab for [' + fpath + ']');
     if ((tab = getTabFromPath(fpath)) ){
         console.log('+ switchToTab found ' + tab);
@@ -195,6 +211,7 @@ function switchToTab(fpath) {
         instance.bFileChanged = false;
         $('#editortabs a[rel="' + tab + '"]')
             .attr('title', fpath)
+            .attr('href', (apath = pathToUrl(fpath)) ? apath : '#')
             .text(fpath.split('/').pop())
             .tab('show');
     } else {
@@ -214,7 +231,8 @@ function addTab(fpath) {
     var nextTab = $('li.filetab:last').clone(),
         lastID = nextTab.children('a').attr('rel'),
         nextID = 'tab-' + (parseInt(lastID.split('-').pop(), 10) + 1).toString(),
-        fname = fpath.split('/').pop();
+        fname = fpath.split('/').pop(),
+        apath;
     console.log('+ addTab ' + nextID);
     addInstance(nextID, fpath);
     nextTab
@@ -223,7 +241,9 @@ function addTab(fpath) {
     nextTab.children('a')
         .attr('rel', nextID)
         .attr('title', fpath)
-        .text((fname !== '') ? fname : nextID.replace('tab', 'untitled'));
+        .attr('href', (apath = pathToUrl(fpath)) ? apath : '#')
+//         .text((fname !== '') ? fname : nextID.replace('tab', 'untitled'));
+        .text((fname !== '') ? fname : 'untitled');
     $('#editortabs').append(nextTab);
     $('#editortabs a:last').tab('show');
     return nextID;
