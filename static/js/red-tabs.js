@@ -298,7 +298,7 @@ $('#editortabs').on('mouseenter mouseleave', 'li.filetab', function (event) {
 });
 
 // Delegated event handler for clicking the filetab close icon
-$('#editortabs').on('click', 'li.filetab > img', function (event) {
+$('#editortabs').on('click', 'li.filetab > img.selected', function (event) {
     "use strict";
     // var key = $(this).parent().children('a').attr('rel');
     // console.log('Closing ' + key);
