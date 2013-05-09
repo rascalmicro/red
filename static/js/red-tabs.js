@@ -163,22 +163,10 @@ function closeAllBut () {
     var candidate = $('#editortabs li.filetab.active'),
         key = candidate.children('a').attr('rel'),
         tab,
-        instance,
-        animate = true;
+        instance;
     for (tab in instances) {
-        if ((tab !== key) && (!instances[tab].bFileChanged)) {
-            delete instances[tab];
-            if (animate) {
-                $('#editortabs a[rel="' + tab + '"]')
-                    .parent()
-                    .hide('fast', function () {
-                        $(this).remove();
-                    });
-            } else {
-                $('#editortabs a[rel="' + tab + '"]')
-                    .parent()
-                    .remove();
-            }
+        if (tab !== key) {
+            deleteUnchangedTab(tab);
         }
     }
 }
@@ -261,6 +249,26 @@ function addTab(fpath) {
     return nextID;
 }
 
+// Called by closeAllBut or when closing non-active tab
+function deleteUnchangedTab(tab) {
+    "use strict";
+    var animate = true;
+    if (!instances[tab].bFileChanged) {
+        delete instances[tab];
+        if (animate) {
+            $('#editortabs a[rel="' + tab + '"]')
+                .parent()
+                .hide('fast', function () {
+                    $(this).remove();
+                });
+        } else {
+            $('#editortabs a[rel="' + tab + '"]')
+                .parent()
+                .remove();
+        }
+    }
+}
+
 // Called from shown event when tab changes - swap CM docs
 function tabShown(e) {
     "use strict";
@@ -297,7 +305,9 @@ $('#editortabs').on('mouseenter mouseleave', 'li.filetab', function (e) {
     // Only show the icon when tab is active and there is more than one tab
     // if ($(this).hasClass('active') && ($('li.filetab').length > 1)) {
     // Only show the close icon when tab is active
-    if ($(this).hasClass('active')) {
+    // if ($(this).hasClass('active')) {
+    // Only show close icon when tab active or unchanged
+    if ($(this).hasClass('active') || !$(this).children('a').hasClass('changed')) {
         if (e.type === 'mouseenter') {
             // console.log('mouseenter');
             $(this).children('img').addClass('selected');
@@ -313,6 +323,10 @@ $('#editortabs').on('click', 'li.filetab > img.selected', function (e) {
     "use strict";
     // var key = $(this).parent().children('a').attr('rel');
     // console.log('Closing ' + key);
-    closeFile(e.metaKey || e.ctrlKey || e.shiftKey);
+    if ($(this).parent().hasClass('active')) {
+        closeFile(e.metaKey || e.ctrlKey || e.shiftKey);
+    } else {
+        deleteUnchangedTab($(this).parent().children('a').attr('rel'));
+    }
 });
 /* END SUPPORT FOR TABS */
