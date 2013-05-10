@@ -412,18 +412,18 @@ def xupload_file():
     if request.method == 'POST':
         try:
             # Check file type and folder
-            print '>>> xupload name raw ' + request.headers['X-File-Name']
+            print '>>> xupload_file name raw ' + request.headers['X-File-Name']
             filename = secure_path(request.headers['X-File-Name'])
 #             filename = secure_filename(request.headers['X-File-Name'])
-            print '>>> xupload name cooked ' + filename
+            print '>>> xupload_file name cooked ' + filename
             try:
                 allowAll = (request.headers['X-AllowAll'] == 'true')
             except:
                 allowAll = False
-            print '## xupload ## AllowAll ' + str(allowAll)
+            print '>>> xupload_file allowAll ' + str(allowAll)
             if not allowAll:
                 if not allowed_file(filename):
-                    print '## xupload ## bad file type ' + filename
+                    print '## xupload_file ## bad file type ' + filename
                     return 'Forbidden', 403
             try:
                 folder = request.headers['X-Folder']
@@ -431,13 +431,14 @@ def xupload_file():
                 folder = ''
             fpath = os.path.join(ROOT, os.path.join(folder, filename))
             # Write out the stream
+            print '## xupload_file ## ' + fpath
             f = file(fpath, 'wb')
             f.write(request.stream.read())
             f.close()
-            print '## xupload ## ' + fpath
         except RequestEntityTooLarge:
             return 'File too large', 413
-        except:
+        except Exception, e:
+            print '## xupload_file ## Unexpected error: %s' % str(e)
             return 'Bad request', 400
     return 'OK', 200
 
