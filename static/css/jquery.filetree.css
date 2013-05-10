@@ -25,6 +25,8 @@ ul.jqueryFileTree > li.directory > a:hover {
 /* No padding-right to stop selection r margin creeping in */
 ul.jqueryFileTree a {
     /* color: #E7E8E9; */
+    position: relative;
+    z-index: 1;
     font-family: "Molengo","URW Gothic L",sans-serif;
     font-size: 1em;
 	text-decoration: none;
@@ -52,6 +54,8 @@ ul.jqueryFileTree a.changed {
 /* Visibility hidden causes issues after scrolling with Webkit and Chrome */
 ul.jqueryFileTree img {
     /* visibility: hidden; */
+    position: relative;
+    z-index: 2;
     float: right;
     margin-right: 3px;
     margin-top: 3px;
