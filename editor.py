@@ -437,7 +437,8 @@ def xupload_file():
             print '## xupload ## ' + fpath
         except RequestEntityTooLarge:
             return 'File too large', 413
-        except:
+        except Exception, e:
+            print '## xupload_file ## Unexpected error: %s' % str(e)
             return 'Bad request', 400
     return 'OK', 200
 
