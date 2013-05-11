@@ -61,6 +61,8 @@ p {
 .btn.rascal {
     font-family: "Lucida Grande","Lucida Sans",sans-serif;
     font-size: 16px;
+    line-height: normal;
+    padding: 9px 14px;
 }
 
 [class^="icon-"],
