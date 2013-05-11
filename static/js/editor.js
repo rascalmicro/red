@@ -2,6 +2,11 @@
 // JSLint 8 Oct 2012 jQuery $ rascal setPictureFrameSize editorSetText saveFile
 // saveMsg editorGetText savePreferences initPreferences defaultPreferences
 
+/*global $, window, document, console, rascal, setInterval, clearInterval, Blob */
+/*global setPictureFrameSize, editorSetText, editorGetText, isReadOnly,
+    savePreferences, initPreferences, defaultPreferences */
+
+
 // Editor globals (see also InitEditor and initPreferences)
 var ROOT;
 var HOME;
@@ -113,7 +118,7 @@ function displayLocation(path) {
     "use strict";
     var fpath = path.split(ROOT).pop(),
         apath;
-    if (apath = pathToUrl(fpath)) {
+    if ((apath = pathToUrl(fpath))) {
         $('#location-bar').html('<a href="' + apath + '">' + fpath + '</a>');
     } else {
         $('#location-bar').text(fpath);
@@ -277,9 +282,8 @@ var queryDelete = {
     }
 };
 
-var deleteFileBusy = false;     // Use semaphore to avoid repeated deletions
-
-$('li.file').live('mouseenter mouseleave', function (event) {
+// Delegated event handler to enable/disable filetree file selection and the delete icon
+$('#filetree').on('mouseenter mouseleave', 'li.file', function (event) {
     "use strict";
     var fpath;
     if (event.type === 'mouseenter') {
@@ -287,40 +291,6 @@ $('li.file').live('mouseenter mouseleave', function (event) {
         $(this).children('a').addClass('selected');
         if ($.inArray(fpath, EXCEPTIONS) === -1) {
             $(this).children('img').addClass('selected');
-            $(this).children('img').click(function () {
-                var jqel, path;
-                if (!deleteFileBusy) {
-                    deleteFileBusy = true;
-                    jqel = $(this).parent();
-                    path = fpath.split(ROOT).pop();
-                    queryDelete.init(FILE, path, function (status) {
-                        if (status === 1) {
-                            console.log('DELETE ' + path);
-                            if (path === $('#path').val()) {
-                                if (bFileChanged) {
-                                    bFileChanged = false;
-                                    unhighlightChanged();
-                                }
-                                trackChanges(false);
-                                editorSetText('');
-                                clearLocation();
-                                hidePicture();
-                            }
-                            $.post('/editor/delete_file', { filename: path }, function (response) {
-                                console.log('DELETE_FILE ' + response);
-                                jqel.hide('slow');
-                                saveMsg('Deleted file');
-                            }).error(function (jqXHR, textStatus, errorThrown) {
-                                console.log('DELETE_FILE: ' + textStatus + ': ' + errorThrown);
-                                saveMsg('Delete file failed');
-                            });
-                        } else {
-                            console.log('DELETE cancel');
-                        }
-                        deleteFileBusy = false;
-                    });
-                }
-            });
         }
     } else {
         $(this).children('a').removeClass('selected');
@@ -328,7 +298,42 @@ $('li.file').live('mouseenter mouseleave', function (event) {
     }
 });
 
-$('li.directory.expanded').live('mouseenter mouseleave', function (event) {
+// Delegated event handler for clicking the file delete icon
+$('#filetree').on('click', 'li.file > img', function (event) {
+    "use strict";
+    var jqel = $(this).parent(),
+        path = jqel.children('a').attr('rel'),
+        fpath = path.split(ROOT).pop();
+    console.log('DELETE click');
+    queryDelete.init(FILE, fpath, function (status) {
+        if (status === 1) {
+            console.log('DELETE ' + fpath);
+            if (fpath === $('#path').val()) {
+                if (bFileChanged) {
+                    bFileChanged = false;
+                    unhighlightChanged();
+                }
+                trackChanges(false);
+                editorSetText('');
+                clearLocation();
+                hidePicture();
+            }
+            $.post('/editor/delete_file', { filename: fpath }, function (response) {
+                console.log('DELETE_FILE ' + response);
+                jqel.hide('slow');
+                saveMsg('Deleted file');
+            }).error(function (jqXHR, textStatus, errorThrown) {
+                console.log('DELETE_FILE: ' + textStatus + ': ' + errorThrown);
+                saveMsg('Delete file failed');
+            });
+        } else {
+            console.log('DELETE cancel');
+        }
+    });
+});
+
+// Delegated event handler to enable/disable the delete icon on an empty folder
+$('#filetree').on('mouseenter mouseleave', 'li.directory.expanded', function (event) {
     "use strict";
     var fpath;
     if (event.type === 'mouseenter') {
@@ -337,30 +342,6 @@ $('li.directory.expanded').live('mouseenter mouseleave', function (event) {
             if ($.inArray(fpath, EXCEPTIONS) === -1) {
                 $(this).children('a').addClass('selected');
                 $(this).children('img').addClass('selected');
-                $(this).children('img').click(function () {
-                    var jqel, path;
-                    if (!deleteFileBusy) {
-                        deleteFileBusy = true;
-                        jqel = $(this).parent();
-                        path = fpath.split(ROOT).pop();
-                        queryDelete.init(FOLDER, path, function (status) {
-                            if (status === 1) {
-                                console.log('DELETE ' + path);
-                                $.post('/editor/delete_folder', { filename: path }, function (response) {
-                                    console.log('DELETE_FOLDER ' + response);
-                                    jqel.hide('slow');
-                                    saveMsg('Deleted folder');
-                                }).error(function (jqXHR, textStatus, errorThrown) {
-                                    console.log('DELETE_FOLDER: ' + textStatus + ': ' + errorThrown);
-                                    saveMsg('Delete folder failed');
-                                });
-                            } else {
-                                console.log('DELETE cancel');
-                            }
-                            deleteFileBusy = false;
-                        });
-                    }
-                });
             }
         }
     } else {
@@ -369,7 +350,31 @@ $('li.directory.expanded').live('mouseenter mouseleave', function (event) {
     }
 });
 
-$('li.directory.collapsed a.selected').live('mouseenter mouseleave', function (event) {
+// Delegated event handler for clicking the empty folder delete icon
+$('#filetree').on('click', 'li.directory.expanded > img', function (event) {
+    "use strict";
+    var jqel = $(this).parent(),
+        path = jqel.children('a').attr('rel'),
+        fpath = path.split(ROOT).pop();
+    queryDelete.init(FOLDER, fpath, function (status) {
+        if (status === 1) {
+            console.log('DELETE ' + fpath);
+            $.post('/editor/delete_folder', { filename: fpath }, function (response) {
+                console.log('DELETE_FOLDER ' + response);
+                jqel.hide('slow');
+                saveMsg('Deleted folder');
+            }).error(function (jqXHR, textStatus, errorThrown) {
+                console.log('DELETE_FOLDER: ' + textStatus + ': ' + errorThrown);
+                saveMsg('Delete folder failed');
+            });
+        } else {
+            console.log('DELETE cancel');
+        }
+    });
+});
+
+// Delegated event handler for removing empty folder select and delete icon if folder collapsed
+$('#filetree').on('mouseenter mouseleave', 'li.directory.collapsed a.selected', function (event) {
     "use strict";
     $(this).removeClass('selected');
     $(this).parent().children('img').removeClass('selected');
@@ -470,7 +475,7 @@ function saveStatus(msg) {
         .css('color', 'red')
         .css('visibility', 'visible')
         .hide()
-        .fadeTo(500, 1)
+        .fadeTo(500, 1);
 }
 
 function saveComplete(directory) {
@@ -522,7 +527,7 @@ function saveFile() {
         f = p.split('/').pop();
         dst = p.replace(f, '');
         blob = new Blob([s], {type: 'text'});
-        blob['name'] = f;
+        blob.name = f;
         files = { 0: blob, length: 1};
         console.log(files);
         saveInit(files, dst);
@@ -620,7 +625,7 @@ function initRascalDnd() {
     "use strict";
     var rd = rascal.dnd;
     rd.root = ROOT;
-    rd.container = 'filetree';
+    rd.containerID = 'filetree';
     rd.notDraggable = EXCEPTIONS;
     rd.itemDropped = moveItem;
     rd.filesDropped = uploadItems;
