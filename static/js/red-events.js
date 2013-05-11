@@ -25,7 +25,7 @@ $('#filetree').on('mouseenter mouseleave', 'li.file', function (event) {
     }
 });
 
-// Delegated event handler for clicking the filetab delete icon
+// Delegated event handler for clicking the file delete icon
 $('#filetree').on('click', 'li.file > img', function (event) {
     "use strict";
     var jqel = $(this).parent(),

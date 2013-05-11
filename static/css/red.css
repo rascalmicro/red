@@ -62,38 +62,39 @@
     margin-right: 160px;
 }
 
-/* amend bootstrap tabs */
-ul.nav.nav-tabs {
+#editortabs a.changed {
+    color: #ef4a42;
+}
+
+/* customise bootstrap tabs */
+.nav-tabs {
     border-bottom: 0;
     margin-bottom: 0;
     margin-left: 6px;
 }
 
-li > a {
+.nav-tabs > li > a {
+    padding-top: 5px;
+    padding-bottom: 5px;
     color: #e7e8e9;
 }
 
-ul.nav.nav-tabs a {
-    padding-top: 4px;
-    padding-bottom: 4px;
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus {
+    background-color: #666;
+    border-color: #666 #666 #666;
 }
 
-#editortabs a.changed {
-    color: #ef4a42;
-}
-
-.filetab.active a {
-    background-color: #444444;
-    color: #FFFFFF;
-    border: none;
-}
-
-.nav-tabs > li {
-    margin-bottom: -2px;
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:focus {
+    color: #e7e8e9;
+    background-color: #444;
+    border-color: #444;
 }
 
 /* filetab close icon */
-ul.nav img {
+.nav-tabs > li > img {
     float: right;
     margin-right: 3px;
     margin-top: 2px;
@@ -101,11 +102,11 @@ ul.nav img {
     opacity: 0.0;
 }
 
-ul.nav img.selected {
+.nav-tabs > li > img.selected {
     opacity: 0.6;
 }
 
-ul.nav img.selected:hover {
+.nav-tabs > li > img.selected:hover {
     opacity: 1.0;
 }
 
@@ -114,6 +115,11 @@ ul.nav img.selected:hover {
     padding: 3px;
     margin-bottom: 5px;
     border: 6px solid #444;
+    /*
+    -moz-box-shadow: 0 0 3px #3A3A3A;
+    -webkit-box-shadow: 0 0 3px #3A3A3A;
+    box-shadow: 0 0 3px #3A3A3A;
+    */
 }
 
 .row-fluid [class*="span"] {
@@ -211,4 +217,3 @@ a[draggable=true] {
 .help-inline.rascal {
     font-size: 13px;
 }
-
