@@ -158,8 +158,10 @@ function saveAll() {
         files.length = count;
         // console.log(files);
         saveInit(files, '');
+        switchToTab(instances[currentTab].fpath);
+    } else {
+        saveMsg('Nothing to save');
     }
-    switchToTab(instances[currentTab].fpath);
 }
 
 // Close active tab

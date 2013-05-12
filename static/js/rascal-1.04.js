@@ -131,6 +131,7 @@ var rascal = {
         timeout: 40,
         totalBytes: 0,
         loadedBytes: 0,
+        savedFiles: 0,
         files: [],
         nextFile: -1,
         int_inFlight: undefined,
@@ -175,6 +176,7 @@ var rascal = {
                             // rascal.upload.status(' - success', 1);
                             rascal.upload.loadedBytes += file.size;
                             // console.log('Upload complete ' + file.name);
+                            rascal.upload.savedFiles += 1;
                             rascal.upload.lastUpload = file.name;
                             if (typeof rascal.upload.uploaded === 'function') {
                                 rascal.upload.uploaded(file.name, rascal.upload.directory);
@@ -216,7 +218,7 @@ var rascal = {
         // Runs every 500ms until all files have been uploaded
         uploadFiles: function () {
             "use strict";
-           var ru = rascal.upload, f;
+            var ru = rascal.upload, f;
             if (ru.inFlight <= 0) {
                 ru.nextFile += 1;
                 if (ru.nextFile < ru.files.length) {
@@ -257,6 +259,7 @@ var rascal = {
             ru.directory = dst;
             ru.totalBytes = 0;
             ru.loadedBytes = 0;
+            ru.savedFiles = 0;
             ru.lastUpload = '';
             for (i = 0; i < files.length; i += 1) {
                 f = files[i];

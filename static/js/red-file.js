@@ -109,13 +109,18 @@ function saveMsg(msg) {
 // Called after all files have been uploaded
 function saveComplete(directory) {
     "use strict";
+    var savedFiles;
     $('#save-progress')
         .removeClass('active')
         .removeClass('progress-striped');
     if (querySave.status === 2) {
         querySave.status = 1;
     }
-    saveMsg('Saved file');
+    if ((savedFiles = rascal.upload.savedFiles) === 1) {
+        saveMsg('Saved file');
+    } else {
+        saveMsg('Saved ' + savedFiles.toString() + ' files');
+    }
     // console.log('saveComplete');
 }
 
