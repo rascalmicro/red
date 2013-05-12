@@ -145,6 +145,10 @@ var rascal = {
             "use strict";
             console.log('rascal.upload: ' + msg);
         },
+        uploaded: function (file, dst) {
+            "use strict";
+            console.log('rascal.upload: ' + file + ' ' + dst);
+        },
         complete: function (directory) {
             "use strict";
             console.log('rascal.upload: complete');
@@ -172,6 +176,9 @@ var rascal = {
                             rascal.upload.loadedBytes += file.size;
                             // console.log('Upload complete ' + file.name);
                             rascal.upload.lastUpload = file.name;
+                            if (typeof rascal.upload.uploaded === 'function') {
+                                rascal.upload.uploaded(file.name, rascal.upload.directory);
+                            }
                         } else if (xhr.status === 0) {
                             rascal.upload.status('Upload of ' + file.name + ' aborted');
                         } else {
@@ -206,9 +213,10 @@ var rascal = {
                 alert("Sorry, XMLHttpRequest upload doesn't seem to be supported by your browser.");
             }
         },
+        // Runs every 500ms until all files have been uploaded
         uploadFiles: function () {
             "use strict";
-            var ru = rascal.upload, f;
+           var ru = rascal.upload, f;
             if (ru.inFlight <= 0) {
                 ru.nextFile += 1;
                 if (ru.nextFile < ru.files.length) {

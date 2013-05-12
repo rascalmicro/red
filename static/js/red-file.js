@@ -3,12 +3,12 @@
 /*jshint strict: true */
 /*global $, document, console, Blob, rascal */
 /*global ROOT, DEFAULT_TEXT */
-/*global editorGetText, editorIsReadOnly */
+/*global editorGetText, editorSetText, editorIsReadOnly */
 /*global highlightInTree, unhighlightChanged, unhighlightInTree, displayTree */
 /*global showPicture */
 /*global querySave */
-/*global getTabFromPath, fileHasBeenChanged, updateLocation, setFileChanged, getFileChanged, getPath */
-
+/*global getTabFromPath, fileHasBeenChanged, updateLocation, setFileChanged,
+    getFileChanged, getPath, anonymousTab, saveAll */
 
 // Move a file or folder (initiated by DnD), rename a file (initiated from dialog)
 //  moveItem /var/www/public/templates/foo.html /var/www/public/static/
@@ -95,17 +95,10 @@ function moveItem(src, dst, copy) {
 //  in procedure xupload_file() obtain value of allowAll
 //  if allowAll is true, allow any file extension to be saved
 
-function saveProgress(pc) {
-    "use strict";
-    // console.log('progress ' + pc);
-    $('#save-bar').css('width', pc + '%');
-}
-
 function saveMsg(msg) {
     "use strict";
     $('#save-message').text(msg)
         .stop(true)
-        .css('color', '')
         .css('visibility', 'visible')
         .hide()
         .fadeTo(500, 1)
@@ -113,31 +106,41 @@ function saveMsg(msg) {
         .fadeTo(2000, 0);
 }
 
-function saveStatus(msg) {
-    "use strict";
-    console.log('saveStatus: ' + msg);
-    $('#save-message').text(msg)
-        .stop(true)
-        .css('color', 'red')
-        .css('visibility', 'visible')
-        .hide()
-        .fadeTo(500, 1);
-}
-
+// Called after all files have been uploaded
 function saveComplete(directory) {
     "use strict";
     $('#save-progress')
         .removeClass('active')
         .removeClass('progress-striped');
-    if (getFileChanged()) {
-        unhighlightChanged();
-        setFileChanged(false);
-    }
     if (querySave.status === 2) {
         querySave.status = 1;
     }
     saveMsg('Saved file');
     // console.log('saveComplete');
+}
+
+// Called after a file has been uploaded
+function saveUploaded(file, dst) {
+    "use strict";
+    var fpath = dst + file,
+        tab = getTabFromPath(fpath);
+    console.log('Uploaded ' + fpath);
+    $('#editortabs li.filetab > a[rel="' + tab + '"]').removeClass('changed');
+    unhighlightInTree(ROOT + fpath);
+    setFileChanged(false, tab);
+}
+
+// Called if there has been an error
+function saveStatus(msg) {
+    "use strict";
+    anonymousTab('status');
+    editorSetText(msg, 'log');
+}
+
+function saveProgress(pc) {
+    "use strict";
+    // console.log('progress ' + pc);
+    $('#save-bar').css('width', pc + '%');
 }
 
 function saveInit(files, dst) {
@@ -152,6 +155,7 @@ function saveInit(files, dst) {
         .addClass('progress-striped')
         .addClass('active');
     ru.status = saveStatus;
+    ru.uploaded = saveUploaded;
     ru.complete = saveComplete;
     ru.filesDropped(files, dst);
 }
@@ -164,9 +168,7 @@ function saveFile() {
         blob,
         f,
         dst;
-    if (rascal.picture.showing) {
-        saveMsg('Can\'t save pictures');
-    } else if (editorIsReadOnly()) {
+    if (editorIsReadOnly()) {
         saveMsg('File is read only');
     } else if (p === '') {
         saveMsg(DEFAULT_TEXT);
@@ -182,6 +184,18 @@ function saveFile() {
     }
 }
 
+function saveOneOrAll(all) {
+    "use strict";
+    console.log('SaveAll ' + all);
+    if (rascal.picture.showing) {
+        saveMsg('Can\'t save pictures');
+    } else if (all) {
+        saveAll();
+    } else {
+        saveFile();
+    }
+}
+
 // Function for binding ctrl keystrokes from Ganeshji Marwaha:
 // http://www.gmarwaha.com/blog/2009/06/16/ctrl-key-combination-simple-jquery-plugin/
 $.ctrl = function (key, callback, args) {
@@ -192,20 +206,21 @@ $.ctrl = function (key, callback, args) {
         }
         // if (e.keyCode === key.charCodeAt(0) && e.ctrlKey) {
         if (e.keyCode === key.charCodeAt(0) && (e.ctrlKey || e.metaKey)) {
+            args = [ e.shiftKey ];
             callback.apply(this, args);
             return false;
         }
     });
 };
 
-$.ctrl('S', function () {
+$.ctrl('S', function (all) {
     "use strict";
-    console.log('ctrl-S');
-    saveFile();
+    console.log('ctrl-S ' + all);
+    saveOneOrAll(all);
 });
 
-$('#save').click(function () {
+$('#save').click(function (e) {
     "use strict";
-    saveFile();
+    saveOneOrAll(e.shiftKey);
 });
 /* END OF SAVE FILE */

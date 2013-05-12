@@ -42,11 +42,11 @@ function trackChanges(enable) {
     }
 }
 
-// Only called from fileChanged
+// Only called from fileChanged for active tab
 function highlightChanged() {
     "use strict";
     var path = ROOT + getPath();
-    console.log('highlighting ' + path);
+    // console.log('highlighting ' + path);
     highlightInTree(path);
     $('#editortabs li.filetab.active > a').addClass('changed');
 }
@@ -63,7 +63,7 @@ function highlightInTree(path) {
 function unhighlightChanged() {
     "use strict";
     var path = ROOT + getPath();
-    console.log('unhighlighting ' + path);
+    // console.log('unhighlighting ' + path);
     unhighlightInTree(path);
     $('#editortabs li.filetab.active > a').removeClass('changed');
 }
@@ -210,6 +210,7 @@ $('#reload').click(function () {
             // Check if succeeded, if not show log
             $.post('/datetime', function (response) {
                 saveMsg('Reloaded pytronics');
+                switchToTab('');
                 closeTab();
             }).error(function (jqXHR, textStatus, errorThrown) {
                 saveMsg('Reload failed - see log');
