@@ -26,14 +26,22 @@ function uploadComplete(directory) {
         }
         jqDst.click();
     }
+    switchToTab('');
     if (editorGetText() === '') {
         closeTab();
     }
-    console.log('End readOnly ' + editorIsReadOnly());
+}
+
+function uploadFileComplete(file, dst) {
+    "use strict";
+    console.log('uploadFileComplete ' + dst + file);
+    switchToTab('');
+    editorSetText(editorGetText() + 'Uploaded ' + dst + file + '\n', 'log');
 }
 
 function uploadStatus(msg) {
     "use strict";
+    switchToTab('');
     editorSetText(editorGetText() + msg + '\n', 'log');
 }
 
@@ -53,6 +61,7 @@ function uploadInit(files, dst) {
         .addClass('progress-striped')
         .addClass('active');
     ru.status = uploadStatus;
+    ru.uploaded = uploadFileComplete;
     ru.complete = uploadComplete;
     anonymousTab('upload status');
     editorSetText('', 'log');

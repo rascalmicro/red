@@ -19,7 +19,8 @@
 // New tabs are cloned from the last (right-hand) tab.
 // There are two types of tab - those related to a file and anonymous tabs.
 // Examples of anonymous tabs are 'untitled' when the editor is first opened and
-// tabs opened for messages from drag and drop upload and reload pytronics
+// tabs opened for messages from drag and drop upload and reload pytronics.
+// There can be zero or no more than one anonymous tabs.
 // When you close the last tab, a new anonymous tab is cloned from the last tab
 // before it is deleted.
 //
@@ -42,9 +43,10 @@
 // it is deleted (irrespective of whether or not the editor content has been changed)
 
 /*jshint strict: true */
-/*global $, console, CodeMirror */
+/*global $, console, CodeMirror, Blob */
 /*global DEFAULT_TEXT, editor, preferences */
-/*global editorSetModeOptions */
+/*global editorSetModeOptions, editorGetText */
+/*global saveInit */
 /*global updateTitle, pathToUrl, closeFile */
 /*global hidePicture */
 
@@ -86,11 +88,11 @@ function initTabs() {
 }
 
 // Change tracking
-function setFileChanged(what) {
+function setFileChanged(state, tab) {
     "use strict";
-    var tab = $('#editortabs li.filetab.active > a').attr('rel');
-//     console.log('> setFileChanged ' + tab + ' ' + what.toString());
-    instances[tab].bFileChanged = what;
+    var whichTab = (tab !== undefined) ? tab : $('#editortabs li.filetab.active > a').attr('rel');
+    console.log('> setFileChanged ' + whichTab + ' ' + state.toString());
+    instances[whichTab].bFileChanged = state;
 }
 
 function getFileChanged() {
@@ -129,7 +131,39 @@ function updateLocation(tab, fpath) {
     instances[tab].fpath = fpath;
 }
 
-/* PUBLIC AND PRIVATE */
+function saveAll() {
+    "use strict";
+    var currentTab = $('#editortabs li.filetab.active > a').attr('rel'),
+        tab,
+        instance,
+        p,
+        s,
+        files = {},
+        blob,
+        count = 0;
+    for (tab in instances) {
+        instance = instances[tab];
+        if (instance.bFileChanged) {
+            p = instance.fpath;
+            switchToTab(p);
+            s = editorGetText();
+            console.log('Saving ' + p + ' (' + s.length + ')');
+            blob = new Blob([s], {type: 'text'});
+            blob.name = p;
+            files[count] = blob;
+            count += 1;
+        }
+    }
+    if (count > 0) {
+        files.length = count;
+        // console.log(files);
+        saveInit(files, '');
+        switchToTab(instances[currentTab].fpath);
+    } else {
+        saveMsg('Nothing to save');
+    }
+}
+
 // Close active tab
 // Animate unless closing right-most tab
 function closeTab() {
@@ -162,8 +196,7 @@ function closeAllBut () {
     "use strict";
     var candidate = $('#editortabs li.filetab.active'),
         key = candidate.children('a').attr('rel'),
-        tab,
-        instance;
+        tab;
     for (tab in instances) {
         if (tab !== key) {
             deleteUnchangedTab(tab);
@@ -183,6 +216,7 @@ function anonymousTab(name) {
     $('#editortabs a[rel="' + tab + '"]').text(name);
 }
 
+/* PUBLIC AND PRIVATE */
 function getTabFromPath(fpath) {
     "use strict";
     var tab, instance;
