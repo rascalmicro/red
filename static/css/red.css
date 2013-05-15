@@ -76,9 +76,14 @@
 .nav-tabs > li > a {
     padding-top: 5px;
     padding-bottom: 5px;
+    padding-right: 28px;
     color: #e7e8e9;
+    background-color: #777;
+    border-color: #666 #666 #666;
 }
 
+
+.nav-tabs > li > a.selected,
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
     background-color: #666;
@@ -86,6 +91,7 @@
 }
 
 .nav-tabs > .active > a,
+.nav-tabs > .active > a.selected,
 .nav-tabs > .active > a:hover,
 .nav-tabs > .active > a:focus {
     color: #e7e8e9;
@@ -96,8 +102,13 @@
 /* filetab close icon */
 .nav-tabs > li > img {
     float: right;
-    margin-right: 3px;
-    margin-top: 2px;
+/*
+    margin-right: 10px;
+    margin-top: 11px;
+ */
+    margin-right: 8px;
+    margin-top: 9px;
+    padding: 2px;
     width: 11px;
     opacity: 0.0;
 }
@@ -217,4 +228,3 @@ a[draggable=true] {
 .help-inline.rascal {
     font-size: 13px;
 }
-

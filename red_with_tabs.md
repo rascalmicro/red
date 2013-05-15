@@ -11,8 +11,8 @@ red with tabs
 * Anonymous tabs are reused for files or messages. There can be zero or one of them.
 * Clicking a tab makes it active and loads its content into the editor.
 * Clicking an active tab does nothing.
-* You can close any unchanged tab (by clicking its close icon).
-* Shift-click a tab close icon to close all but the active tab.
+* You can close any tab (by clicking its close icon).
+* Shift-click an active tab close icon to close all but the active tab.
 * You can close the last tab. It will be replaced by an anonymous tab.
 * The preferred way to dismiss a picture is by clicking it.
 * Shift-click Save or type Shift-Cmd/Ctrl-S to Save All changed files.
@@ -38,6 +38,8 @@ red with tabs
 * Close all but this tab
 * Red help
 * Save All (hold down Shift while clicking Save or typing Cmd/Ctrl-S)
+* Can now close non-active tab where doc has changed (shows querySave)
+* Improved tab appearance
 
 #### KNOWN ISSUES
 
@@ -51,6 +53,6 @@ red with tabs
 * Display fonts as page from font book 
 
 --
-Last update 12 May 2013
+Last update 15 May 2013
 
 [cm]: https://github.com/marijnh/CodeMirror/commit/a48b5d71cd30c58808f359a9c604dac89d9b2ba6

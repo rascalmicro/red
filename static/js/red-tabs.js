@@ -44,11 +44,12 @@
 
 /*jshint strict: true */
 /*global $, console, CodeMirror, Blob */
-/*global DEFAULT_TEXT, editor, preferences */
+/*global ROOT, DEFAULT_TEXT, editor, preferences */
 /*global editorSetModeOptions, editorGetText */
-/*global saveInit */
-/*global updateTitle, pathToUrl, closeFile */
+/*global saveInit, saveMsg */
+/*global unhighlightInTree, updateTitle, pathToUrl, closeFile */
 /*global hidePicture */
+/*global querySave, QS_SAVE */
 
 // Tabbed editor instances keyed by tab ID
 // Model for instance (to be cloned)
@@ -155,10 +156,10 @@ function saveAll() {
         }
     }
     if (count > 0) {
+        switchToTab(instances[currentTab].fpath);
         files.length = count;
         // console.log(files);
         saveInit(files, '');
-        switchToTab(instances[currentTab].fpath);
     } else {
         saveMsg('Nothing to save');
     }
@@ -283,6 +284,30 @@ function addTab(fpath) {
     return nextID;
 }
 
+// Called from filetab close event
+function closeInactiveTab(tab) {
+    "use strict";
+    var closeInstance,
+        currentTab;
+    closeInstance = instances[tab];
+    if (closeInstance.bFileChanged) {
+        currentTab = $('#editortabs li.filetab.active > a').attr('rel');
+        switchToTab(closeInstance.fpath);
+        querySave.init(QS_SAVE, function (status) {
+            switchToTab(instances[currentTab].fpath);
+            if (status === 1) {
+                // Save or Don't Save
+                $('#editortabs li.filetab > a[rel="' + tab + '"]').removeClass('changed');
+                unhighlightInTree(ROOT + closeInstance.fpath);
+                setFileChanged(false, tab);
+                deleteUnchangedTab(tab);
+            }
+        });
+    } else {
+        deleteUnchangedTab(tab);
+    }
+}
+
 // Called by closeAllBut or when closing non-active tab
 function deleteUnchangedTab(tab) {
     "use strict";
@@ -336,31 +361,27 @@ $('#editortabs').on('shown', 'a[data-toggle="tab"]', function (e) {
 // Delegated event handler to enable/disable the filetab close icon
 $('#editortabs').on('mouseenter mouseleave', 'li.filetab', function (e) {
     "use strict";
-    // Only show the icon when tab is active and there is more than one tab
-    // if ($(this).hasClass('active') && ($('li.filetab').length > 1)) {
-    // Only show the close icon when tab is active
-    // if ($(this).hasClass('active')) {
     // Only show close icon when tab active or unchanged
-    if ($(this).hasClass('active') || !$(this).children('a').hasClass('changed')) {
+    //if ($(this).hasClass('active') || !$(this).children('a').hasClass('changed')) {
         if (e.type === 'mouseenter') {
             // console.log('mouseenter');
-            $(this).children('img').addClass('selected');
+            $(this).children().addClass('selected');
+            /* $(this).children('img').addClass('selected'); */
         } else {
             // console.log('mouseleave');
-            $(this).children('img').removeClass('selected');
+            $(this).children().removeClass('selected');
+            // $(this).children('img').removeClass('selected');
         }
-    }
+    //}
 });
 
 // Delegated event handler for clicking the filetab close icon
 $('#editortabs').on('click', 'li.filetab > img.selected', function (e) {
     "use strict";
-    // var key = $(this).parent().children('a').attr('rel');
-    // console.log('Closing ' + key);
     if ($(this).parent().hasClass('active')) {
         closeFile(e.metaKey || e.ctrlKey || e.shiftKey);
     } else {
-        deleteUnchangedTab($(this).parent().children('a').attr('rel'));
+        closeInactiveTab($(this).parent().children('a').attr('rel'));
     }
 });
 /* END SUPPORT FOR TABS */
