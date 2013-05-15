@@ -256,7 +256,7 @@ function editorSetModeOptions () {
     function lintJson () {
         console.log('> lint json');
         editor.setOption('gutters', ['CodeMirror-lint-markers']);
-        editor.setOption('lintWith', CodeMirror.jsonValidator);
+        editor.setOption('lintWith', { getAnnotations: CodeMirror.jsonValidator, onUpdateLinting: lintDone });
     }
     function lintClear() {
         console.log('> lint clear');
