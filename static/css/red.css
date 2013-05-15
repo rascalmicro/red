@@ -82,8 +82,11 @@
     border-color: #666 #666 #666;
 }
 
+.nav-tabs > li > a {
+    background-color: #777;
+    border-color: #666 #666 #666;
+}
 
-.nav-tabs > li > a.selected,
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
     background-color: #666;
@@ -102,18 +105,10 @@
 /* filetab close icon */
 .nav-tabs > li > img {
     float: right;
-/*
-    margin-right: 10px;
-    margin-top: 11px;
- */
     margin-right: 8px;
     margin-top: 9px;
     padding: 2px;
     width: 11px;
-    opacity: 0.0;
-}
-
-.nav-tabs > li > img.selected {
     opacity: 0.6;
 }
 
