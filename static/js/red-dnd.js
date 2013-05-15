@@ -7,7 +7,7 @@
 /*global editorSetText, editorGetText, editorIsReadOnly */
 /*global moveItem, saveMsg, saveProgress */
 /*global displayTree */
-/*global anonymousTab, closeTab */
+/*global anonymousTab, closeTab, switchToTab */
 
 function uploadComplete(directory) {
     "use strict";
