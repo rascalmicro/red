@@ -109,6 +109,10 @@
     margin-top: 9px;
     padding: 2px;
     width: 11px;
+    opacity: 0.0;
+}
+
+.nav-tabs > li > img.selected {
     opacity: 0.6;
 }
 
