@@ -234,6 +234,16 @@ function editorSetMode(ext) {
     editor.setOption('mode', mode);
 }
 
+function lintDone(annotations) {
+    "use strict";
+//     console.log(annotations);
+    if (annotations.length === 0) {
+        $('.CodeMirror').removeClass('lintWarning');
+    } else {
+        $('.CodeMirror').addClass('lintWarning');
+    }
+}
+
 function editorSetModeOptions () {
     "use strict";
     var mode = editor.getOption('mode');
@@ -241,7 +251,7 @@ function editorSetModeOptions () {
     function lintJavascript () {
         console.log('> lint javascript');
         editor.setOption('gutters', ['CodeMirror-lint-markers']);
-        editor.setOption('lintWith', CodeMirror.javascriptValidator);
+        editor.setOption('lintWith', { getAnnotations: CodeMirror.javascriptValidator, onUpdateLinting: lintDone });
     }
     function lintJson () {
         console.log('> lint json');
@@ -252,6 +262,7 @@ function editorSetModeOptions () {
         console.log('> lint clear');
         editor.setOption('gutters', []);
         editor.setOption('lintWith', undefined);
+        $('.CodeMirror').removeClass('lintWarning');
     }
 
     // Set readOnly
@@ -303,8 +314,8 @@ function editorSetText(s, ext) {
         ext = 'txt';
     }
     editorSetMode(ext);
-    editorSetModeOptions();
     editor.setValue(s);
+    editorSetModeOptions();
     trackChanges(true);
 }
 

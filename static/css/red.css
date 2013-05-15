@@ -102,10 +102,6 @@
 /* filetab close icon */
 .nav-tabs > li > img {
     float: right;
-/*
-    margin-right: 10px;
-    margin-top: 11px;
- */
     margin-right: 8px;
     margin-top: 9px;
     padding: 2px;
@@ -126,11 +122,6 @@
     padding: 3px;
     margin-bottom: 5px;
     border: 6px solid #444;
-    /*
-    -moz-box-shadow: 0 0 3px #3A3A3A;
-    -webkit-box-shadow: 0 0 3px #3A3A3A;
-    box-shadow: 0 0 3px #3A3A3A;
-    */
 }
 
 .row-fluid [class*="span"] {

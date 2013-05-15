@@ -20,7 +20,7 @@
 // There are two types of tab - those related to a file and anonymous tabs.
 // Examples of anonymous tabs are 'untitled' when the editor is first opened and
 // tabs opened for messages from drag and drop upload and reload pytronics.
-// There can be zero or no more than one anonymous tabs.
+// There can be zero or one anonymous tabs.
 // When you close the last tab, a new anonymous tab is cloned from the last tab
 // before it is deleted.
 //
@@ -294,6 +294,7 @@ function closeInactiveTab(tab) {
         currentTab = $('#editortabs li.filetab.active > a').attr('rel');
         switchToTab(closeInstance.fpath);
         querySave.init(QS_SAVE, function (status) {
+            // Must do this before deleting tab
             switchToTab(instances[currentTab].fpath);
             if (status === 1) {
                 // Save or Don't Save
