@@ -230,7 +230,7 @@ function editorSetMode(ext) {
         mode = 'text';
     }
 
-    console.log('mode ' + mode);
+    // console.log('mode ' + mode);
     editor.setOption('mode', mode);
 }
 
@@ -247,6 +247,8 @@ function lintDone(annotations) {
 function editorSetModeOptions () {
     "use strict";
     var mode = editor.getOption('mode');
+
+    console.log('> mode ' + mode);
 
     function lintJavascript () {
         console.log('> lint javascript');
