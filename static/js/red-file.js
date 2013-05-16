@@ -165,6 +165,15 @@ function saveInit(files, dst) {
     ru.filesDropped(files, dst);
 }
 
+// End a querySave wait if one is running
+function saveAbort(msg) {
+    "use strict";
+    if (querySave.status === 2) {
+        querySave.status = 1;
+    }
+    saveMsg(msg);
+}
+
 function saveFile() {
     "use strict";
     var p = getPath(),
@@ -174,9 +183,9 @@ function saveFile() {
         f,
         dst;
     if (editorIsReadOnly()) {
-        saveMsg('File is read only');
+        saveAbort('File is read only');
     } else if (p === '') {
-        saveMsg(DEFAULT_TEXT);
+        saveAbort(DEFAULT_TEXT);
     } else {
         console.log('Saving ' + p + ' (' + s.length + ')');
         f = p.split('/').pop();
