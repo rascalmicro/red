@@ -45,7 +45,7 @@
 /*jshint strict: true */
 /*global $, console, CodeMirror, Blob */
 /*global ROOT, DEFAULT_TEXT, editor, preferences */
-/*global editorSetModeOptions, editorGetText */
+/*global editorSetModeOptions, editorGetText, trackChanges */
 /*global saveInit, saveMsg */
 /*global unhighlightInTree, updateTitle, pathToUrl, closeFile */
 /*global hidePicture */
@@ -339,7 +339,8 @@ function tabShown(e) {
         currInst = instances[currKey];
     console.log('+ tabShown prev ' + prevKey + ', curr ' + currKey);
     if (!currInst.doc) {
-        currInst.doc = CodeMirror.Doc(DEFAULT_TEXT);
+        trackChanges(false);
+        currInst.doc = CodeMirror.Doc(DEFAULT_TEXT, 'text');
     }
     hidePicture();
     // Disable highlight active line across swap
