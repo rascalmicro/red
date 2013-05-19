@@ -126,8 +126,10 @@ function fileHasBeenChanged(fpath) {
 // Called from moveItem after a move
 function updateLocation(tab, fpath) {
     "use strict";
+    var apath;
     $('#editortabs a[rel="' + tab + '"]')
         .attr('title', fpath)
+        .attr('href', (apath = pathToUrl(fpath)) ? apath : '#')
         .text(fpath.split('/').pop());
     instances[tab].fpath = fpath;
 }
