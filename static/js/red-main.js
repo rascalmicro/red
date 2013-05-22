@@ -209,7 +209,7 @@ $('#reload').click(function () {
                 .removeClass('progress-striped');
             // Check if succeeded, if not show log
             $.post('/datetime', function (response) {
-                saveMsg('Reloaded pytronics');
+                saveMsg('Reloaded');
                 switchToTab('');
                 closeTab();
             }).error(function (jqXHR, textStatus, errorThrown) {
