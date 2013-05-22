@@ -127,6 +127,7 @@ var rascal = {
         directory: 'static/uploads/',
         allowAll: false,
         allowedTypes: [ 'image/' ],
+        allowedExtensions: [],
         maxFileBytes: 1024 * 1024,
         timeout: 40,
         totalBytes: 0,
@@ -243,7 +244,7 @@ var rascal = {
         filesDropped: function (files, dst) {
             "use strict";
             var ru = rascal.upload, i, f;
-            function isAllowed(ft) {
+            function isAllowed(ft, fn) {
                 var j;
                 if (ru.allowAll) {
                     return true;
@@ -252,6 +253,9 @@ var rascal = {
                     if (ft.indexOf(ru.allowedTypes[j]) === 0) {
                         return true;
                     }
+                }
+                if ($.inArray(fn.split('.').pop().toLowerCase(), ru.allowedExtensions) !== -1) {
+                    return true;
                 }
                 return false;
             }
@@ -264,7 +268,7 @@ var rascal = {
             for (i = 0; i < files.length; i += 1) {
                 f = files[i];
                 // Validate file type and size
-                if (!isAllowed(f.type)) {
+                if (!isAllowed(f.type, f.name)) {
                     ru.status(f.name + ' (' + f.type + ') isn\'t a file type that can be uploaded');
                 } else if (f.size >= ru.maxFileBytes) {
                     ru.status(f.name + ' (' + f.type + ') is too large (limit is ' +
