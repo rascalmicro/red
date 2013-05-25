@@ -41,8 +41,8 @@
 //
 //          extendBindTree  - external function to add drag and drop
 //
-// Also updated jquery.filetree to pass JSLint (uncomment next line for JSLint)
-// var jQuery, $, escape, bindTree;
+// Also updated jquery.filetree to pass JSLint
+/*global escape */
 if (jQuery) {
     (function ($) {
         "use strict";

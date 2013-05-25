@@ -293,7 +293,7 @@ var rascal = {
         listID: 'filelist',
         prefix: '',
         transform: undefined,
-        delimiter: '<br />',
+        delimiter: '<br/>',
         suffix: '',
         complete: function () {
             "use strict";
