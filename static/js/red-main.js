@@ -3,11 +3,12 @@
 /*jshint strict: true */
 /*global $, window, document, console, rascal */
 /*global editorSetText */
+/*global uploadStatus */
 /*global saveMsg */
 /*global showPicture, hidePicture */
 /*global querySave, QS_SAVE, QS_REVERT */
 /*global setFileChanged, getFileChanged, getPath, switchToTab, fileHasBeenChanged,
-        anonymousTab, closeTab, closeAllBut */
+        anonymousTab, closeTab, closeAllBut, getTabFromPath, closeInactiveTab */
 
 // Editor globals (see also InitEditor and initPreferences)
 var ROOT;
@@ -194,31 +195,47 @@ function closeFile(meta) {
 // a symlink static/log/public.log to /var/log/uwsgi/public.log
 $('#reload').click(function () {
     "use strict";
+    var PUBLIC_LOG = 'static/log/public.log',
+        tab = getTabFromPath(PUBLIC_LOG);
+    console.log('log tab ' + typeof tab);
+    hidePicture();
+    anonymousTab('reload status');
+    editorSetText('Pytronics is reloading. Please wait...\n');
+    // Close public.log if already open to avoid confusion
+    if (typeof tab !== 'undefined') {
+        closeInactiveTab(tab);
+    }
     $('#reload-bar').css('width', '0%');
-    $.post('/editor/reload', function (response) {
-        hidePicture();
-        anonymousTab('reload status');
-        editorSetText('Pytronics is reloading. Please wait...', 'log');
-        // Wait 15 sec
-        $('#reload-progress')
-            .addClass('progress-striped')
-            .addClass('active');
-        $('#reload-bar').animate({ 'width': '100%' }, 15000, function () {
+    $.post('/editor/rotate', function (response) {
+        switchToTab('');
+        uploadStatus('Logs rotated, restarting server...');
+        $.post('/editor/reload', function (response) {
+            switchToTab('');
+            uploadStatus('Server restarted, waiting for completion...');
+            // Wait 15 sec
             $('#reload-progress')
-                .removeClass('active')
-                .removeClass('progress-striped');
-            // Check if succeeded, if not show log
-            $.post('/datetime', function (response) {
-                saveMsg('Reloaded');
-                switchToTab('');
-                closeTab();
-            }).error(function (jqXHR, textStatus, errorThrown) {
-                saveMsg('Reload failed - see log');
-                loadFile(ROOT + 'static/log/public.log');
+                .addClass('progress-striped')
+                .addClass('active');
+            $('#reload-bar').animate({ 'width': '100%' }, 15000, function () {
+                $('#reload-progress')
+                    .removeClass('active')
+                    .removeClass('progress-striped');
+                // Check if succeeded, if not show log
+                $.post('/datetime', function (response) {
+                    saveMsg('Reloaded');
+                    switchToTab('');
+                    closeTab();
+                }).error(function (jqXHR, textStatus, errorThrown) {
+                    saveMsg('Reload failed - see log');
+                    loadFile(ROOT + PUBLIC_LOG);
+                });
             });
+        }).error(function (jqXHR, textStatus, errorThrown) {
+            console.log('reload: reload: ' + textStatus + ': ' + errorThrown);
+            saveMsg('Reload failed');
         });
     }).error(function (jqXHR, textStatus, errorThrown) {
-        console.log('reload: ' + textStatus + ': ' + errorThrown);
-        saveMsg('Reload pytronics failed');
+        console.log('reload: rotate: ' + textStatus + ': ' + errorThrown);
+        saveMsg('Reload failed');
     });
 });

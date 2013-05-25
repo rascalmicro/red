@@ -268,7 +268,7 @@ function editorSetModeOptions () {
     }
 
     // Set readOnly
-    editor.setOption('readOnly', (mode === 'log'));
+    editor.setOption('readOnly', (mode === 'log') ? 'nocursor' : false);
     console.log('> readOnly ' + editor.getOption('readOnly'));
 
     // Set lint options
