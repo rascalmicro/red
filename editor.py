@@ -359,7 +359,7 @@ def delete_file():
 @editor.route('/editor/new_folder', methods=['POST'])
 @login_required
 def new_folder():
-    import os, subprocess
+    import os
     name = secure_path(request.form['folderName'])
 #     name = secure_filename(request.form['folderName'])
     path = ROOT + 'static/' + name
@@ -424,6 +424,8 @@ def xupload_file():
             if not allowAll:
                 if not allowed_file(filename):
                     print '## xupload_file ## bad file type ' + filename
+                    # read into bitbucket to avoid timeout
+                    _ = request.stream.read()
                     return 'Forbidden', 403
             try:
                 folder = request.headers['X-Folder']
@@ -443,17 +445,22 @@ def xupload_file():
     return 'OK', 200
 
 # Reload pytronics button
-@editor.route('/editor/reload', methods=['POST'])
+@editor.route('/editor/rotate', methods=['POST'])
 @login_required
-def reload():
+def rotate():
     import subprocess
     res = subprocess.call(['logrotate', '-f', '/var/www/rotate_public.conf'])
     if res <> 0:
         return 'Bad request', 400
-    else:
-        res = subprocess.call(['touch', '/etc/uwsgi/public.ini'])
-        if res <> 0:
-            return 'Bad request', 400
+    return 'OK', 200
+
+@editor.route('/editor/reload', methods=['POST'])
+@login_required
+def reload():
+    import subprocess
+    res = subprocess.call(['touch', '/etc/uwsgi/public.ini'])
+    if res <> 0:
+        return 'Bad request', 400
     return 'OK', 200
 
 # Save prefs in editor.config
