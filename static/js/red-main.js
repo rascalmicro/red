@@ -206,33 +206,37 @@ $('#reload').click(function () {
         closeInactiveTab(tab);
     }
     $('#reload-bar').css('width', '0%');
+    $('#reload-progress')
+        .addClass('progress-striped')
+        .addClass('active');
     $.post('/editor/rotate', function (response) {
         switchToTab('');
-        uploadStatus('Logs rotated, restarting server...');
-        $.post('/editor/reload', function (response) {
-            switchToTab('');
-            uploadStatus('Server restarted, waiting for completion...');
-            // Wait 15 sec
-            $('#reload-progress')
-                .addClass('progress-striped')
-                .addClass('active');
-            $('#reload-bar').animate({ 'width': '100%' }, 15000, function () {
-                $('#reload-progress')
-                    .removeClass('active')
-                    .removeClass('progress-striped');
-                // Check if succeeded, if not show log
-                $.post('/datetime', function (response) {
-                    saveMsg('Reloaded');
-                    switchToTab('');
-                    closeTab();
-                }).error(function (jqXHR, textStatus, errorThrown) {
-                    saveMsg('Reload failed - see log');
-                    loadFile(ROOT + PUBLIC_LOG);
+        uploadStatus('Logs rotated, waiting for completion...');
+        // Wait 2 sec
+        $('#reload-bar').animate({ 'width': '100%' }, 2000, function () {
+            $.post('/editor/reload', function (response) {
+                switchToTab('');
+                uploadStatus('Server restarted, waiting for completion...');
+                $('#reload-bar').css('width', '0%');
+                // Wait 15 sec
+                $('#reload-bar').animate({ 'width': '100%' }, 15000, function () {
+                    $('#reload-progress')
+                        .removeClass('active')
+                        .removeClass('progress-striped');
+                    // Check if succeeded, if not show log
+                    $.post('/datetime', function (response) {
+                        saveMsg('Reloaded');
+                        switchToTab('');
+                        closeTab();
+                    }).error(function (jqXHR, textStatus, errorThrown) {
+                        saveMsg('Reload failed - see log');
+                        loadFile(ROOT + PUBLIC_LOG);
+                    });
                 });
+            }).error(function (jqXHR, textStatus, errorThrown) {
+                console.log('reload: reload: ' + textStatus + ': ' + errorThrown);
+                saveMsg('Reload failed');
             });
-        }).error(function (jqXHR, textStatus, errorThrown) {
-            console.log('reload: reload: ' + textStatus + ': ' + errorThrown);
-            saveMsg('Reload failed');
         });
     }).error(function (jqXHR, textStatus, errorThrown) {
         console.log('reload: rotate: ' + textStatus + ': ' + errorThrown);
