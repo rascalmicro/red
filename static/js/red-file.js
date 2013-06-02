@@ -95,6 +95,8 @@ function moveItem(src, dst, copy) {
 //  in procedure xupload_file() obtain value of allowAll
 //  if allowAll is true, allow any file extension to be saved
 
+var saveBusy = false;
+
 function saveMsg(msg) {
     "use strict";
     $('#save-message').text(msg)
@@ -122,6 +124,7 @@ function saveComplete(directory) {
         saveMsg('Saved ' + savedFiles.toString() + ' files');
     }
     // console.log('saveComplete');
+    saveBusy = false;
 }
 
 // Called after a file has been uploaded
@@ -163,6 +166,7 @@ function saveInit(files, dst) {
     ru.uploaded = saveUploaded;
     ru.complete = saveComplete;
     ru.filesDropped(files, dst);
+    saveBusy = true;
 }
 
 // End a querySave wait if one is running
@@ -200,13 +204,15 @@ function saveFile() {
 
 function saveOneOrAll(all) {
     "use strict";
-    console.log('SaveAll ' + all);
-    if (rascal.picture.showing) {
-        saveMsg('Can\'t save pictures');
-    } else if (all) {
-        saveAll();
-    } else {
-        saveFile();
+    if (!saveBusy) {
+        console.log('SaveAll ' + all);
+        if (rascal.picture.showing) {
+            saveMsg('Can\'t save pictures');
+        } else if (all) {
+            saveAll();
+        } else {
+            saveFile();
+        }
     }
 }
 
