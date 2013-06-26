@@ -1,6 +1,6 @@
 from flask import abort, Blueprint, flash, Flask, redirect, render_template, request, url_for
 from flask.ext.login import (LoginManager, current_user, login_required,
-                            login_user, logout_user, UserMixin, AnonymousUser,
+                            login_user, logout_user, UserMixin,
                             confirm_login, fresh_login_required)
 from jinja2 import TemplateNotFound
 # from werkzeug import secure_filename
@@ -64,10 +64,6 @@ class User(UserMixin):
 def redirect_to_static(path):
     return redirect('/static/' + path, 302)
 
-## login support
-class Anonymous(AnonymousUser):
-    name = u'Anonymous'
-
 USERS = {
     1: User(u'rascal', 1),
 }
@@ -81,7 +77,6 @@ editor.config.from_object(__name__)
 
 login_manager = LoginManager()
 
-login_manager.anonymous_user = Anonymous
 login_manager.login_view = '/editor/auth'
 login_manager.login_message = u'Please log in to access this page.'
 login_manager.refresh_view = '/editor/reauth'
@@ -93,7 +88,6 @@ def load_user(id):
 login_manager.setup_app(editor)
 
 def get_hash(username):
-#     f = open('/etc/passwd', 'r')
     f = open(PASSWD_FILE, 'r')
     accounts = f.readlines()
     for account in accounts:
@@ -236,7 +230,6 @@ def move_item():
 @editor.route('/editor/read', methods=['POST'])
 @login_required
 def read_contents():
-#     path = secure_path(request.form['path'])
     try:
         path = request.form['path']
         f = open(ROOT + path, 'r')
@@ -317,7 +310,6 @@ def new_template():
     import os
     print '>>> new_template name raw ' + request.form['templateName']
     name = secure_path(request.form['templateName'])
-#     name = secure_filename(request.form['templateName'])
     print '>>> new_template name cooked ' + name
     option = request.form['templateOption']
     if option == 'other':
@@ -361,7 +353,6 @@ def delete_file():
 def new_folder():
     import os
     name = secure_path(request.form['folderName'])
-#     name = secure_filename(request.form['folderName'])
     path = ROOT + 'static/' + name
     if os.path.exists(path):
         return 'Conflict', 409
@@ -386,20 +377,6 @@ def delete_folder():
         return 'Bad Request', 400
     return 'OK', 200
 
-# Save button
-# @editor.route('/editor/save', methods=['POST'])
-# @login_required
-# def save():
-#     try:
-#         path = secure_path(request.form['path'])
-#         print '## save ## ' + path
-#         f = open(ROOT + path, 'w')
-#         f.write(request.form['text'])
-#         f.close()
-#     except:
-#         return 'Bad Request', 400
-#     return 'OK', 200
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -414,7 +391,6 @@ def xupload_file():
             # Check file type and folder
             print '>>> xupload_file name raw ' + request.headers['X-File-Name']
             filename = secure_path(request.headers['X-File-Name'])
-#             filename = secure_filename(request.headers['X-File-Name'])
             print '>>> xupload_file name cooked ' + filename
             try:
                 allowAll = (request.headers['X-AllowAll'] == 'true')
@@ -630,7 +606,6 @@ def monitor():
         import subprocess
         process_list = subprocess.Popen(['ps', '-ww'], stdout=subprocess.PIPE).communicate()[0].split('\n')
         table = '</td></tr>\n<tr><td>'.join(process_list).replace(' ', '&nbsp;')
-        # print table
         return render_template('monitor.html', home=HOME, processes=table)
     except TemplateNotFound:
         abort(404)
