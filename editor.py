@@ -425,7 +425,7 @@ def xupload_file():
 @login_required
 def rotate():
     import subprocess
-    res = subprocess.call(['logrotate', '-f', '/var/www/rotate_public.conf'])
+    res = subprocess.call(['logrotate', '-f', '/etc/logrotate_public.conf'])
     if res <> 0:
         return 'Bad request', 400
     return 'OK', 200
