@@ -30,7 +30,7 @@ else:
     ROOT = '/var/www/public/'
     HOME = '/'
     from crypt import crypt
-    PASSWD_FILE = '/etc/passwd'
+    PASSWD_FILE = '/etc/shadow'
     CONFIG_FILE = '/var/www/editor/static/editor.conf'
     IFCONFIG = 'ifconfig'
 # End environment definitions
@@ -118,8 +118,8 @@ def auth():
         # Validate password
         pw = request.form['password']
         hash = get_hash('root')
-        salt = hash[0:2]
-        if crypt(pw, salt) == hash:
+        salt = hash[3:11]
+        if crypt(pw, '$6$' + salt) == hash:
             if login_user(USER_NAMES['rascal']):
                 flash('Logged in!')
                 return redirect(request.args.get('next') or '/')
