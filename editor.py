@@ -3,6 +3,7 @@ from flask.ext.login import (LoginManager, current_user, login_required,
                             login_user, logout_user, UserMixin,
                             confirm_login, fresh_login_required)
 from jinja2 import TemplateNotFound
+import background
 # from werkzeug import secure_filename
 
 # Support multiple environments
@@ -36,6 +37,7 @@ else:
 # End environment definitions
 
 editor = Flask(__name__)
+editor.register_blueprint(background.editor)
 
 # Include "no-cache" header in all POST responses
 @editor.after_request
