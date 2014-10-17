@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Background scripts</title>
+    {% include "include/editor-head.html" %}
+    <link rel="stylesheet" type="text/css" href="/editor/static/css/editor-other.css">
+    {% include "include/editor-scripts.html" %}
+</head>
+<body>
+    {% include "include/editor-topbar.html" %}
+    <div class="container-fluid">
+        <div class="log-display">
+            <table id="scripts" class="zebra">
+                    <tr><td>NAME</td><td>STATUS</td><td>ERROR MESSAGE</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            "use strict";
+            $.post("/editor/background/status", function (response) {
+                var data = $.parseJSON(response);
+                //series = data.series,
+                //band = data.band;
+                console.log(data);
+                $.each(data, function (index, script) {
+                    console.log(script.name);
+                    $("#scripts tr:last").after("<tr><td>" + script.name + "</td><td>" + script.statename + "</td><td>" + script.description + "</td></tr>");
+                });
+                $(".zebra tr").mouseover(function () { $(this).addClass("over"); }).mouseout(function () { $(this).removeClass("over"); });
+                $(".zebra tr:even").addClass("alt");
+            });
+        });
+     </script>
+</body>
+</html>

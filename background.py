@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, json, jsonify, render_template, request
 import os
 from subprocess import call
 import supervisor.xmlrpc
@@ -8,6 +8,10 @@ bg = xmlrpclib.ServerProxy('http://127.0.0.1', transport=supervisor.xmlrpc.Super
     None, None,'unix:///var/run/supervisor.sock'))
 
 editor = Blueprint('background', __name__, template_folder='templates')
+
+@editor.route('/editor/background', methods=['GET', 'POST'])
+def background():
+    return render_template('background-scripts.html')
 
 @editor.route('/editor/background/add/<scriptname>', methods=['GET', 'POST'])
 def add(scriptname):
@@ -34,9 +38,7 @@ def add(scriptname):
 def allstatus():
     d = bg.supervisor.getAllProcessInfo()
     print d
-    names = dict(zip([script['name'] for script in d], [script['statename'] + ': ' + script['description'] for script in d]))
-    print names
-    return jsonify(**names)
+    return json.dumps(d)
 
 @editor.route('/editor/background/status/<scriptname>', methods=['GET', 'POST'])
 def status(scriptname):
