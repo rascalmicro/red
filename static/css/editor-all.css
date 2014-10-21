@@ -29,6 +29,7 @@ p {
   background-image: -o-linear-gradient(top, #4A4A4A, #3A3A3A);
   background-image: linear-gradient(top, #4A4A4A, #3A3A3A);
   border-color: #343434;
+  min-height: 50px;
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#4A4A4A', endColorstr='#3A3A3A', GradientType=0);
 }
 
