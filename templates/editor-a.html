@@ -71,7 +71,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="span3">
+            <div class="col-md-3">
                 <div id="ft-background" class="well rascal rm-well-default">
                     <div id="filetree">&nbsp;</div>
                 </div><!--/.well -->
@@ -82,7 +82,7 @@
                     <img id="preferences" src="/editor/static/images/oxygen-actions-32x32.png" title="Set editor preferences" />
                 </div><!--/.well -->
             </div>
-            <div class="span9">
+            <div class="col-md-9">
                 <input id="path" type="hidden" name="path" value="{{ path }}">
                 <div id="location-bar" class="well rascal rm-well-default">&nbsp;</div>
                 <div id="textfield">
@@ -101,12 +101,12 @@
         </div>
         <div class="modal-body">
             <div class="row">
-                <div class="span8">
+                <div class="col-md-8">
                     <p id="template-message">&nbsp;</p>
                     <input id="template-name" type="text" name="template-name" />
-                    <div id="template-note" class="span9"><small>&nbsp;</small></div>
+                    <div id="template-note" class="col-md-9"><small>&nbsp;</small></div>
                 </div> <!-- /span -->
-                <div class="span4">
+                <div class="col-md-4">
                     <div id='template-radios' class="controls">
                         <label class="radio">
                             <input id="docHTML" type="radio" name="docType" value="html" checked="checked" />
@@ -223,7 +223,7 @@
                     <div class="control-group rascal">
                         <label class="control-label" for="theme">Theme</label>
                         <div class="controls">
-                            <select id="theme" class="span3">
+                            <select id="theme" class="col-md-3">
                                 <option value="textmate" selected="selected">TextMate</option>
                                 <option value="solarized_light">Solarized Light</option>
                                 <option value="solarized_dark">Solarized Dark</option>
@@ -235,7 +235,7 @@
                     <div class="control-group rascal">
                         <label class="control-label" for="fontSize">Font size</label>
                         <div class="controls">
-                            <input id="fontSize" type="number" value="12" min="9" max="72" class="span1" />
+                            <input id="fontSize" type="number" value="12" min="9" max="72" class="col-md-1" />
                             <span class="help-inline rascal">9-72 px</span>
                         </div> <!-- controls -->
                     </div> <!-- control-group -->
@@ -243,7 +243,7 @@
                     <div class="control-group rascal">
                         <label class="control-label" for="lineHeight">Line height</label>
                         <div class="controls">
-                            <input id="lineHeight" type="number" value="1.4" min="1.0" max="6.0" step="0.1" class="span1" />
+                            <input id="lineHeight" type="number" value="1.4" min="1.0" max="6.0" step="0.1" class="col-md-1" />
                             <span class="help-inline rascal">1.0-6.0 em</span>
                         </div> <!-- controls -->
                     </div> <!-- control-group -->
@@ -251,7 +251,7 @@
                     <div class="control-group rascal">
                         <label class="control-label" for="tabSize">Tab size</label>
                         <div class="controls">
-                            <input id="tabSize" type="number" value="4" min="1" max="64" class="span1" />
+                            <input id="tabSize" type="number" value="4" min="1" max="64" class="col-md-1" />
                             <span class="help-inline rascal">width of a tab character</span>
                         </div> <!-- controls -->
                     </div> <!-- control-group -->
