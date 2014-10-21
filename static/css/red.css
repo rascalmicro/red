@@ -127,7 +127,7 @@
     border: 6px solid #444;
 }
 
-.row-fluid [class*="span"] {
+.row [class*="span"] {
 /*
   margin-left: 2.127659574%;
   *margin-left: 2.0744680846382977%;
@@ -136,7 +136,7 @@
   *margin-left: 1.0744680846382977%;
 }
 
-.row-fluid .span9 {
+.row .span9 {
 /*
   width: 74.468085099%;
   *width: 74.4148936096383%;
