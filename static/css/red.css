@@ -127,24 +127,6 @@
     border: 6px solid #444;
 }
 
-.row [class*="span"] {
-/*
-  margin-left: 2.127659574%;
-  *margin-left: 2.0744680846382977%;
- */
-  margin-left: 1.127659574%;
-  *margin-left: 1.0744680846382977%;
-}
-
-.row .col-md-9 {
-/*
-  width: 74.468085099%;
-  *width: 74.4148936096383%;
- */
-  width: 75.468085099%;
-  *width: 75.4148936096383%;
-}
-
 /* filetree */
 #filetree {
     padding: 0 10px 0 0;

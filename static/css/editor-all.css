@@ -38,7 +38,7 @@ p {
 }
 
 .nav-collapse.rascal {
-    /* float: right; */
+    float: right;
     text-align: right;
     padding-top: 5px;
 }
