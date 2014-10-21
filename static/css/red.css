@@ -82,11 +82,6 @@
     border-color: #666 #666 #666;
 }
 
-.nav-tabs > li > a {
-    background-color: #777;
-    border-color: #666 #666 #666;
-}
-
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
     background-color: #666;
@@ -97,9 +92,9 @@
 .nav-tabs > .active > a.selected,
 .nav-tabs > .active > a:hover,
 .nav-tabs > .active > a:focus {
-    color: #e7e8e9;
-    background-color: #444;
-    border-color: #444;
+    color: #e7e8e9 !important;
+    background-color: #444 !important;
+    border-color: #444 !important;
 }
 
 /* filetab close icon */
