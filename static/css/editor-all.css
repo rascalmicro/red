@@ -62,6 +62,10 @@ p {
 }
 
 /* General */
+.well {
+    background-image: none;
+}
+
 .btn.rascal {
     font-family: "Lucida Grande","Lucida Sans",sans-serif;
     font-size: 16px;
