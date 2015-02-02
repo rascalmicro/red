@@ -171,15 +171,6 @@ p {
   *margin-left: 1.0744680846382977%;
 }
 
-.row .col-md-9 {
-/*
-  width: 74.468085099%;
-  *width: 74.4148936096383%;
- */
-  width: 75.468085099%;
-  *width: 75.4148936096383%;
-}
-
 #filetree {
     padding: 0 10px 0 0;
     /* border: 1px solid #414243; */
