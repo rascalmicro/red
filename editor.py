@@ -148,20 +148,11 @@ def logout():
     return redirect(HOME)
 
 ## editor functions
-# Start editor specified by editor-xx file
-# editor-cm (CodeMirror) is the default
 @editor.route('/editor/')
 @login_required
 def start_edit():
-    import ConfigParser
-    config = ConfigParser.SafeConfigParser()
-    config.read(CONFIG_FILE)
     try:
-        editor = config.get('Advanced', 'editor')
-    except:
-        editor = 'editor-cm'
-    try:
-        return render_template(editor + '.html', root=ROOT, home=HOME, text_to_edit='No file selected')
+        return render_template('editor.html', root=ROOT, home=HOME, text_to_edit='No file selected')
     except TemplateNotFound:
         abort(404)
 
