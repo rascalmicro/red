@@ -138,212 +138,240 @@
 
     <!-- modal dialogues -->
     <div id="modal-t" class="modal fade rascal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">×</button>
-            <h3 id="template-title">Create a new template</h3>
-        </div>
-        <div class="modal-body">
-            <div class="row">
-                <div class="col-md-8">
-                    <p id="template-message">&nbsp;</p>
-                    <input id="template-name" type="text" name="template-name" />
-                    <div id="template-note" class="col-md-9"><small>&nbsp;</small></div>
-                </div> <!-- /span -->
-                <div class="col-md-4">
-                    <div id='template-radios' class="controls">
-                        <label class="radio">
-                            <input id="docHTML" type="radio" name="docType" value="html" checked="checked" />
-                            HTML
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="docType" value="doctab" />
-                            HTML with Docs tab
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="docType" value="markdown" />
-                            Documentation
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="docType" value="python" />
-                            Python
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="docType" value="other" />
-                            Other
-                        </label>
-                    </div> <!-- /controls -->
-                </div> <!-- /span -->
-            </div> <!-- /row -->
-        </div> <!-- /modal-body -->
-        <div class="modal-footer">
-            <a id="template-cancel" href="#" class="btn">Cancel</a>
-            <a id="template-create" href="#" class="btn btn-danger">Create template</a>
-        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3 id="template-title">Create a new template</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p id="template-message">&nbsp;</p>
+                            <input id="template-name" type="text" name="template-name" />
+                            <div id="template-note" class="col-md-9"><small>&nbsp;</small></div>
+                        </div> <!-- /span -->
+                        <div class="col-md-4">
+                            <div id='template-radios' class="controls">
+                                <label class="radio">
+                                    <input id="docHTML" type="radio" name="docType" value="html" checked="checked" />
+                                    HTML
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="docType" value="doctab" />
+                                    HTML with Docs tab
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="docType" value="markdown" />
+                                    Documentation
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="docType" value="python" />
+                                    Python
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="docType" value="other" />
+                                    Other
+                                </label>
+                            </div> <!-- /controls -->
+                        </div> <!-- /span -->
+                    </div> <!-- /row -->
+                </div> <!-- /modal-body -->
+                <div class="modal-footer">
+                    <a id="template-cancel" href="#" class="btn">Cancel</a>
+                    <a id="template-create" href="#" class="btn btn-danger">Create template</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 
     <div id="modal-f" class="modal fade rascal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">×</button>
-            <h3>Create a new folder in "static"</h3>
-        </div>
-        <div class="modal-body">
-            <p id="folder-message">&nbsp;</p>
-            <input id="folder-name" type="text" name="folder-name" />
-        </div>
-        <div class="modal-footer">
-            <a id="folder-cancel" href="#" class="btn">Cancel</a>
-            <a id="folder-create" href="#" class="btn btn-danger">Create folder</a>
-        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3>Create a new folder in "static"</h3>
+                </div>
+                <div class="modal-body">
+                    <p id="folder-message">&nbsp;</p>
+                    <input id="folder-name" type="text" name="folder-name" />
+                </div>
+                <div class="modal-footer">
+                    <a id="folder-cancel" href="#" class="btn">Cancel</a>
+                    <a id="folder-create" href="#" class="btn btn-danger">Create folder</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 
     <div id="modal-n" class="modal fade rascal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">×</button>
-            <h3>Rename or copy file</h3>
-        </div>
-        <div class="modal-body">
-            <p id="rename-message">&nbsp;</p>
-            <input id="rename-name" type="text" name="rename-name" />
-        </div>
-        <div class="modal-footer">
-            <a id="rename-copy" href="#" class="btn btn-warning">Copy</a>
-            <a id="rename-cancel" href="#" class="btn">Cancel</a>
-            <a id="rename-yes" href="#" class="btn btn-danger">Rename</a>
-        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3>Rename or copy file</h3>
+                </div>
+                <div class="modal-body">
+                    <p id="rename-message">&nbsp;</p>
+                    <input id="rename-name" type="text" name="rename-name" />
+                </div>
+                <div class="modal-footer">
+                    <a id="rename-copy" href="#" class="btn btn-warning">Copy</a>
+                    <a id="rename-cancel" href="#" class="btn">Cancel</a>
+                    <a id="rename-yes" href="#" class="btn btn-danger">Rename</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 
     <div id="modal-s" class="modal fade rascal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">×</button>
-            <h3>Save file</h3>
-        </div>
-        <div class="modal-body">
-            <p id="save-file-message">&nbsp;</p>
-        </div>
-        <div class="modal-footer">
-            <a id="save-no" href="#" class="btn btn-warning">Don't Save</a>
-            <a id="save-cancel" href="#" class="btn">Cancel</a>
-            <a id="save-yes" href="#" class="btn btn-danger">Save</a>
-        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3>Save file</h3>
+                </div>
+                <div class="modal-body">
+                    <p id="save-file-message">&nbsp;</p>
+                </div>
+                <div class="modal-footer">
+                    <a id="save-no" href="#" class="btn btn-warning">Don't Save</a>
+                    <a id="save-cancel" href="#" class="btn">Cancel</a>
+                    <a id="save-yes" href="#" class="btn btn-danger">Save</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 
     <div id="modal-r" class="modal fade rascal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">×</button>
-            <h3>Revert file</h3>
-        </div>
-        <div class="modal-body">
-            <p id="revert-file-message">&nbsp;</p>
-        </div>
-        <div class="modal-footer">
-            <a id="revert-cancel" href="#" class="btn">Cancel</a>
-            <a id="revert-yes" href="#" class="btn btn-danger">Revert</a>
-        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3>Revert file</h3>
+                </div>
+                <div class="modal-body">
+                    <p id="revert-file-message">&nbsp;</p>
+                </div>
+                <div class="modal-footer">
+                    <a id="revert-cancel" href="#" class="btn">Cancel</a>
+                    <a id="revert-yes" href="#" class="btn btn-danger">Revert</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 
     <div id="modal-d" class="modal fade rascal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">×</button>
-            <h3>Delete a file or folder</h3>
-        </div>
-        <div class="modal-body">
-            <p id="delete-file-message">&nbsp;</p>
-        </div>
-        <div class="modal-footer">
-            <a id="delete-cancel" href="#" class="btn">Cancel</a>
-            <a id="delete-yes" href="#" class="btn btn-danger">Delete</a>
-        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3>Delete a file or folder</h3>
+                </div>
+                <div class="modal-body">
+                    <p id="delete-file-message">&nbsp;</p>
+                </div>
+                <div class="modal-footer">
+                    <a id="delete-cancel" href="#" class="btn">Cancel</a>
+                    <a id="delete-yes" href="#" class="btn btn-danger">Delete</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 
     <div id="modal-p" class="modal fade rascal">
-        <div class="modal-header">
-            <button class="close" data-dismiss="modal">×</button>
-            <h3>CodeMirror Preferences</h3>
-        </div>
-        <div class="modal-body">
-            <form class="form-horizontal">
-                <fieldset>
-                    <div class="control-group rascal">
-                        <label class="control-label" for="theme">Theme</label>
-                        <div class="controls">
-                            <select id="theme" class="col-md-2">
-                                <option selected="selected">default</option>
-                                <option>blackboard</option>
-                                <option>night</option>
-                                <option>solarized-light</option>
-                                <option>solarized-dark</option>
-                            </select>
-                        </div> <!-- controls -->
-                    </div> <!-- control-group -->
-                    <div class="control-group rascal">
-                        <label class="control-label" for="fontSize">Font size</label>
-                        <div class="controls">
-                            <input id="fontSize" type="number" value="12" min="9" max="72" class="col-md-1" />
-                            <span class="help-inline rascal">9-72 px</span>
-                        </div> <!-- controls -->
-                    </div> <!-- control-group -->
-                    <div class="control-group rascal">
-                        <label class="control-label" for="lineHeight">Line height</label>
-                        <div class="controls">
-                            <input id="lineHeight" type="number" value="1.2" min="1.0" max="6.0" step="0.1" class="col-md-1" />
-                            <span class="help-inline rascal">1.0-6.0 em</span>
-                        </div> <!-- controls -->
-                    </div> <!-- control-group -->
-                    <div class="control-group rascal">
-                        <label class="control-label" for="tabSize">Tab size</label>
-                        <div class="controls">
-                            <input id="tabSize" type="number" value="4" min="1" max="64" class="col-md-1" />
-                            <span class="help-inline rascal">width of a tab character</span>
-                        </div> <!-- controls -->
-                    </div> <!-- control-group -->
-                    <div class="control-group rascal">
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input id="softTabs" type="checkbox" name="softTabs" />Soft tabs
-                            </label>
-                            <label class="checkbox">
-                                <input id="visibleTabs" type="checkbox" name="visibleTabs" />Visible tabs
-                            </label>
-                        </div> <!-- controls -->
-                    </div> <!-- control-group -->
-                    <div class="control-group rascal">
-                        <label class="control-label" for="indentUnit">Indent size</label>
-                        <div class="controls">
-                            <input id="indentUnit" type="number" value="2" min="0" max="64" class="col-md-1" />
-                            <span class="help-inline rascal">additional spaces to indent a block</span>
-                        </div> <!-- controls -->
-                    </div> <!-- control-group -->
-                    <div class="control-group rascal">
-                        <label class="control-label" for="lineNumbers">Options</label>
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input id="lineNumbers" type="checkbox" name="lineNumbers" />Show line numbers
-                            </label>
-                            <label class="checkbox">
-                                <input id="highlightActive" type="checkbox" name="highlightActive" />Highlight active line
-                            </label>
-                            <label class="checkbox">
-                                <input id="lineWrapping" type="checkbox" name="lineWrapping" />Wrap lines
-                            </label>
-                            <label class="checkbox">
-                                <input id="matchBrackets" type="checkbox" name="matchBrackets" />Match brackets
-                            </label>
-                            <label class="checkbox">
-                                <input id="closeBrackets" type="checkbox" name="closeBrackets" />Close brackets
-                            </label>
-                             <label class="checkbox">
-                                <input id="useLint" type="checkbox" name="useLint" />Use lint for JavaScript and JSON
-                            </label>
-                       </div> <!-- controls -->
-                    </div> <!-- control-group -->
-                </fieldset>
-            </form>
-        </div> <!-- /modal-body -->
-        <div class="modal-footer">
-            <a id="prefs-defaults" href="#" class="btn btn-warning">Restore Defaults</a>
-            <a id="prefs-cancel" href="#" class="btn">Cancel</a>
-            <a id="prefs-save" href="#" class="btn btn-danger">Save</a>
-        </div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">×</button>
+                    <h3>CodeMirror Preferences</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <fieldset>
+                            <div class="control-group rascal">
+                                <label class="control-label" for="theme">Theme</label>
+                                <div class="controls">
+                                    <select id="theme" class="col-md-2">
+                                        <option selected="selected">default</option>
+                                        <option>blackboard</option>
+                                        <option>night</option>
+                                        <option>solarized-light</option>
+                                        <option>solarized-dark</option>
+                                    </select>
+                                </div> <!-- controls -->
+                            </div> <!-- control-group -->
+                            <div class="control-group rascal">
+                                <label class="control-label" for="fontSize">Font size</label>
+                                <div class="controls">
+                                    <input id="fontSize" type="number" value="12" min="9" max="72" class="col-md-1" />
+                                    <span class="help-inline rascal">9-72 px</span>
+                                </div> <!-- controls -->
+                            </div> <!-- control-group -->
+                            <div class="control-group rascal">
+                                <label class="control-label" for="lineHeight">Line height</label>
+                                <div class="controls">
+                                    <input id="lineHeight" type="number" value="1.2" min="1.0" max="6.0" step="0.1" class="col-md-1" />
+                                    <span class="help-inline rascal">1.0-6.0 em</span>
+                                </div> <!-- controls -->
+                            </div> <!-- control-group -->
+                            <div class="control-group rascal">
+                                <label class="control-label" for="tabSize">Tab size</label>
+                                <div class="controls">
+                                    <input id="tabSize" type="number" value="4" min="1" max="64" class="col-md-1" />
+                                    <span class="help-inline rascal">width of a tab character</span>
+                                </div> <!-- controls -->
+                            </div> <!-- control-group -->
+                            <div class="control-group rascal">
+                                <div class="controls">
+                                    <label class="checkbox">
+                                        <input id="softTabs" type="checkbox" name="softTabs" />Soft tabs
+                                    </label>
+                                    <label class="checkbox">
+                                        <input id="visibleTabs" type="checkbox" name="visibleTabs" />Visible tabs
+                                    </label>
+                                </div> <!-- controls -->
+                            </div> <!-- control-group -->
+                            <div class="control-group rascal">
+                                <label class="control-label" for="indentUnit">Indent size</label>
+                                <div class="controls">
+                                    <input id="indentUnit" type="number" value="2" min="0" max="64" class="col-md-1" />
+                                    <span class="help-inline rascal">additional spaces to indent a block</span>
+                                </div> <!-- controls -->
+                            </div> <!-- control-group -->
+                            <div class="control-group rascal">
+                                <label class="control-label" for="lineNumbers">Options</label>
+                                <div class="controls">
+                                    <label class="checkbox">
+                                        <input id="lineNumbers" type="checkbox" name="lineNumbers" />Show line numbers
+                                    </label>
+                                    <label class="checkbox">
+                                        <input id="highlightActive" type="checkbox" name="highlightActive" />Highlight active line
+                                    </label>
+                                    <label class="checkbox">
+                                        <input id="lineWrapping" type="checkbox" name="lineWrapping" />Wrap lines
+                                    </label>
+                                    <label class="checkbox">
+                                        <input id="matchBrackets" type="checkbox" name="matchBrackets" />Match brackets
+                                    </label>
+                                    <label class="checkbox">
+                                        <input id="closeBrackets" type="checkbox" name="closeBrackets" />Close brackets
+                                    </label>
+                                     <label class="checkbox">
+                                        <input id="useLint" type="checkbox" name="useLint" />Use lint for JavaScript and JSON
+                                    </label>
+                               </div> <!-- controls -->
+                            </div> <!-- control-group -->
+                        </fieldset>
+                    </form>
+                </div> <!-- /modal-body -->
+                <div class="modal-footer">
+                    <a id="prefs-defaults" href="#" class="btn btn-warning">Restore Defaults</a>
+                    <a id="prefs-cancel" href="#" class="btn">Cancel</a>
+                    <a id="prefs-save" href="#" class="btn btn-danger">Save</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 
     {% include "include/editor-help.html" %}
