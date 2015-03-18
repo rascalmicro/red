@@ -1,4 +1,4 @@
-/* SUPPORT FOR TABS - April 2013 */
+/* SUPPORT FOR TABS */
 
 // There is only one editor but multiple documents, each held in a tab.
 // The active (highlighted) tab's document is in the editor.
@@ -10,10 +10,10 @@
 // by editorSetModeOptions after a document has been swapped in.
 //
 // Swapping between tabs is event driven. Clicking a tab makes it active
-// and raises the shown event which calls function tabShown. When an already
+// and raises the shown.bs.tab event which calls function tabShown. When an already
 // open or new file is clicked in the list, we call switchToTab which
 // locates the tab from its filepath, then calls the tab.show method to make
-// it active. This also raises a shown event.
+// it active. This also raises a shown.bs.tab event.
 
 // There is always at least one tab.
 // New tabs are cloned from the last (right-hand) tab.
@@ -60,17 +60,6 @@ var INSTANCE = {
     };
 
 var instances = {};
-
-/*
-var activeKey,
-    activeInstance;
-
-// This is an accelerator to save looking up the active tab
-function setActiveKey(tab) {
-    activeKey = tab;
-    activeInstance = instances[tab];
-}
-*/
 
 // Private function
 function addInstance(tab, fpath) {
@@ -257,7 +246,6 @@ function switchToTab(fpath) {
         console.log('+ switchToTab added ' + tab);
     }
     updateTitle(fpath);
-//     setActiveKey(tab);
 }
 
 /* PRIVATE */
@@ -279,7 +267,6 @@ function addTab(fpath) {
         .attr('rel', nextID)
         .attr('title', fpath)
         .attr('href', (apath = pathToUrl(fpath)) ? apath : '#')
-//         .text((fname !== '') ? fname : nextID.replace('tab', 'untitled'));
         .text((fname !== '') ? fname : 'untitled');
     $('#editortabs').append(nextTab);
     $('#editortabs a:last').tab('show');
@@ -352,12 +339,11 @@ function tabShown(e) {
     editor.setOption('styleActiveLine', preferences.highlightActive);
     editor.focus();
     updateTitle(currInst.fpath);
-//     setActiveKey(currKey);
 }
 
 /* EVENT HANDLERS */
 // Delegated default event handler when tab shown
-$('#editortabs').on('shown', 'a[data-toggle="tab"]', function (e) {
+$('#editortabs').on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
     "use strict";
     tabShown(e);
 });
