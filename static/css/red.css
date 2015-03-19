@@ -103,8 +103,10 @@
     margin-right: 8px;
     margin-top: 9px;
     padding: 2px;
-    width: 11px;
+    width: 19px;
     opacity: 0.0;
+    position: relative;
+    z-index: 1000;
 }
 
 .nav-tabs > li > img.selected {
