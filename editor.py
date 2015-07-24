@@ -3,7 +3,7 @@ from flask.ext.login import (LoginManager, current_user, login_required,
                             login_user, logout_user, UserMixin,
                             confirm_login, fresh_login_required)
 from jinja2 import TemplateNotFound
-import background
+#import background
 # from werkzeug import secure_filename
 
 # Support multiple environments
@@ -37,7 +37,7 @@ else:
 # End environment definitions
 
 editor = Flask(__name__)
-editor.register_blueprint(background.editor)
+#editor.register_blueprint(background.editor)
 
 # Include "no-cache" header in all POST responses
 @editor.after_request
@@ -70,7 +70,7 @@ USERS = {
     1: User(u'rascal', 1),
 }
 
-USER_NAMES = dict((u.name, u) for u in USERS.itervalues())
+USER_NAMES = dict((u.name, u) for u in USERS.values())
 
 SECRET_KEY = 'rascal'
 DEBUG = True
@@ -100,7 +100,7 @@ def get_hash(username):
 
 @editor.route('/editor/auth', methods=['GET', 'POST'])
 def auth():
-    import ConfigParser
+    import configparser
     section = 'Login'
     key = 'showPassword'
     if request.method == 'POST' and 'password' in request.form:
@@ -115,8 +115,8 @@ def auth():
             config.set(section, key, str(showPassword))
             with open(CONFIG_FILE, 'wb') as configfile:
                 config.write(configfile)
-        except Exception, e:
-            print '## auth save_pref ## Unexpected error: %s' % str(e)
+        except:# Exception, e:
+            print('## auth save_pref ## Unexpected error: ')#%s' % str(e))
         # Validate password
         pw = request.form['password']
         hash = get_hash('root')
@@ -130,11 +130,11 @@ def auth():
         else:
             flash('Sorry, but you could not log in.')
     # Get show password preference
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
     config.read(CONFIG_FILE)
     try:
         showPassword = config.getboolean(section, key)
-    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+    except (configparser.NoSectionError, configparser.NoOptionError):
         showPassword = False
     # Set type of password input element (auth page uses this to sets checkbox state)
     pwtype = 'text' if showPassword else 'password'
@@ -168,7 +168,7 @@ def secure_path(path):
 def dirlist(qd): # This function heavily based on Martin Skou's connector script for jQuery File Tree
     import os, urllib
     d = urllib.unquote(qd)
-    print '## dirlist ## ' + d
+    print('## dirlist ## ' + d)
     noneditable = ['pyc', 'pyo']
     r=['<ul class="jqueryFileTree" style="display: none;">']
     s=[]
@@ -183,9 +183,9 @@ def dirlist(qd): # This function heavily based on Martin Skou's connector script
                     if (e not in noneditable and f != '__init__.py'):
                         s.append('<li class="file ext_%s"><img src="/editor/static/images/file-icons/delete.png" rel="%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,ff,f))
         r += s
-    except Exception,e:
+    except:# Exception,e:
         r.append('Could not load directory: %s' % str(e))
-        print 'Error: ' + str(e)
+        print('Error: ')# + str(e)
     r.append('</ul>')
     return ''.join(r)
 
@@ -208,14 +208,14 @@ def move_item():
     if src.endswith('/'):
         arsrc = src.split('/')
         dst += arsrc[len(arsrc) - 2] + '/'
-    print ('## move_item ## {0}' + src + ' to ' + dst).format('copy ' if copy else '')
+    print('## move_item ## {0}' + src + ' to ' + dst).format('copy ' if copy else '')
     try:
         if copy:
             shutil.copy(src, dst)
         else:
             shutil.move(src, dst)
-    except Exception, e:
-        print '## move_item ## Unexpected error: %s' % str(e)
+    except: #Exception, e:
+        print('## move_item ## Unexpected error:')# %s' % str(e)
         return 'Bad Request', 400
     return 'OK', 200
 
@@ -227,8 +227,8 @@ def read_contents():
         path = request.form['path']
         f = open(ROOT + path, 'r')
         return f.read()
-    except Exception, e:
-        print '## read_contents ## Unexpected error: %s' % str(e)
+    except: #Exception, e:
+        print('## read_contents ## Unexpected error:')# %s' % str(e)
         return 'Not Found', 404
 
 BOILERPLATE = """<!DOCTYPE html>
@@ -301,9 +301,9 @@ def example(variable):
 @login_required
 def new_template():
     import os
-    print '>>> new_template name raw ' + request.form['templateName']
+    print('>>> new_template name raw ' + request.form['templateName'])
     name = secure_path(request.form['templateName'])
-    print '>>> new_template name cooked ' + name
+    print('>>> new_template name cooked ' + name)
     option = request.form['templateOption']
     if option == 'other':
         path = ROOT + 'static/' + name
@@ -333,11 +333,11 @@ def new_template():
 def delete_file():
     import os
     fname = request.form['filename']
-    print '## Deleting file ## ' + fname
+    print('## Deleting file ## ' + fname)
     try:
         os.remove(ROOT + fname)
-    except Exception, e:
-        print '## delete_file ## Unexpected error: %s' % str(e)
+    except: # Exception, e:
+        print('## delete_file ## Unexpected error:')# %s' % str(e)
         return 'Bad Request', 400
     return 'OK', 200
 
@@ -352,8 +352,8 @@ def new_folder():
     else:
         try:
             os.makedirs(path)
-        except Exception, e:
-            print '## new_folder ## Unexpected error: %s' % str(e)
+        except:# Exception, e:
+            print('## new_folder ## Unexpected error:')# %s' % str(e)
             return 'Bad Request', 400
     return 'OK', 200
 
@@ -362,11 +362,11 @@ def new_folder():
 def delete_folder():
     import os
     fname = request.form['filename']
-    print 'Deleting folder: ' + fname
+    print('Deleting folder: ' + fname)
     try:
         os.rmdir(ROOT + fname)
-    except Exception, e:
-        print '## delete_folder ## Unexpected error: %s' % str(e)
+    except:# Exception, e:
+        print('## delete_folder ## Unexpected error: ')#%s' % str(e)
         return 'Bad Request', 400
     return 'OK', 200
 
@@ -382,17 +382,17 @@ def xupload_file():
     if request.method == 'POST':
         try:
             # Check file type and folder
-            print '>>> xupload_file name raw ' + request.headers['X-File-Name']
+            print('>>> xupload_file name raw ' + request.headers['X-File-Name'])
             filename = secure_path(request.headers['X-File-Name'])
-            print '>>> xupload_file name cooked ' + filename
+            print('>>> xupload_file name cooked ' + filename)
             try:
                 allowAll = (request.headers['X-AllowAll'] == 'true')
             except:
                 allowAll = False
-            print '>>> xupload_file allowAll ' + str(allowAll)
+            print('>>> xupload_file allowAll ' + str(allowAll))
             if not allowAll:
                 if not allowed_file(filename):
-                    print '## xupload_file ## bad file type ' + filename
+                    print('## xupload_file ## bad file type ' + filename)
                     # read into bitbucket to avoid timeout
                     _ = request.stream.read()
                     return 'Forbidden', 403
@@ -402,14 +402,14 @@ def xupload_file():
                 folder = ''
             fpath = os.path.join(ROOT, os.path.join(folder, filename))
             # Write out the stream
-            print '## xupload_file ## ' + fpath
+            print('## xupload_file ## ' + fpath)
             f = file(fpath, 'wb')
             f.write(request.stream.read())
             f.close()
         except RequestEntityTooLarge:
             return 'File too large', 413
-        except Exception, e:
-            print '## xupload_file ## Unexpected error: %s' % str(e)
+        except: #Exception, e:
+            print('## xupload_file ## Unexpected error:')# %s' % str(e)
             return 'Bad request', 400
     return 'OK', 200
 
@@ -419,7 +419,7 @@ def xupload_file():
 def rotate():
     import subprocess
     res = subprocess.call(['logrotate', '-f', '/etc/logrotate_public.conf'])
-    if res <> 0:
+    if res != 0:
         return 'Bad request', 400
     return 'OK', 200
 
@@ -428,7 +428,7 @@ def rotate():
 def reload():
     import subprocess
     res = subprocess.call(['touch', '/etc/uwsgi/public.ini'])
-    if res <> 0:
+    if res != 0:
         return 'Bad request', 400
     return 'OK', 200
 
@@ -449,8 +449,8 @@ def save_prefs():
             config.set(section, k, str(v))
         with open(CONFIG_FILE, 'wb') as configfile:
             config.write(configfile)
-    except Exception, e:
-        print '## save_prefs ## Unexpected error: %s' % str(e)
+    except:# Exception, e:
+        print('## save_prefs ## Unexpected error:')# %s' % str(e)
         return 'Bad request', 400
     return 'OK', 200
 
@@ -478,8 +478,8 @@ def read_prefs():
                 d[k] = config.get(section, k)
         except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
             d[k] = defaults[k]
-        except Exception, e:
-            print '## read_prefs ## Unexpected error: %s' % str(e)
+        except:# Exception, e:
+            print('## read_prefs ## Unexpected error:')# %s' % str(e)
     return json.dumps(d)
 
 ## log page functions
@@ -552,8 +552,8 @@ def config():
     except ConfigParser.NoOptionError:
         editor = 'editor-cm'
         advanced = '1'
-    except Exception, e:
-        print '## config ## Unexpected error: %s' % str(e)
+    except:# Exception, e:
+        print('## config ## Unexpected error:')# %s' % str(e)
         editor = 'editor-cm'
         advanced = '0'
     try:
@@ -586,8 +586,8 @@ def set_editor():
         config.set(section, 'editor', editor)
         with open(CONFIG_FILE, 'wb') as configfile:
             config.write(configfile)
-    except Exception, e:
-        print '## set_editor ## Unexpected error: %s' % str(e)
+    except:# Exception, e:
+        print('## set_editor ## Unexpected error:')# %s' % str(e)
         return 'Bad request', 400
     return 'OK', 200
 
