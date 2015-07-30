@@ -115,8 +115,8 @@ def auth():
             config.set(section, key, str(showPassword))
             with open(CONFIG_FILE, 'wb') as configfile:
                 config.write(configfile)
-        except:# Exception, e:
-            print('## auth save_pref ## Unexpected error: ')#%s' % str(e))
+        except Exception as e:
+            print('## auth save_pref ## Unexpected error: {0}'.format(e))
         # Validate password
         pw = request.form['password']
         hash = get_hash('root')
@@ -166,14 +166,14 @@ def secure_path(path):
 
 # Directory management
 def dirlist(qd): # This function heavily based on Martin Skou's connector script for jQuery File Tree
-    import os, urllib
-    d = urllib.unquote(qd)
+    import os, urllib.parse
+    d=urllib.parse.unquote(qd)
     print('## dirlist ## ' + d)
     noneditable = ['pyc', 'pyo']
     r=['<ul class="jqueryFileTree" style="display: none;">']
     s=[]
     try:
-        for f in sorted(os.listdir(d), key=unicode.lower):
+        for f in sorted(os.listdir(d), key=str.lower):
             if not f.startswith('.git'):
                 ff=os.path.join(d,f)
                 if os.path.isdir(ff):
@@ -183,9 +183,9 @@ def dirlist(qd): # This function heavily based on Martin Skou's connector script
                     if (e not in noneditable and f != '__init__.py'):
                         s.append('<li class="file ext_%s"><img src="/editor/static/images/file-icons/delete.png" rel="%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,ff,f))
         r += s
-    except:# Exception,e:
-        r.append('Could not load directory: %s' % str(e))
-        print('Error: ')# + str(e)
+    except Exception as e:
+        r.append('Could not load directory: {0}'.format(e))
+        print('Error: {0}'.format(e))
     r.append('</ul>')
     return ''.join(r)
 
@@ -214,8 +214,8 @@ def move_item():
             shutil.copy(src, dst)
         else:
             shutil.move(src, dst)
-    except: #Exception, e:
-        print('## move_item ## Unexpected error:')# %s' % str(e)
+    except Exception as e:
+        print('## move_item ## Unexpected error: {0}'.format(e))
         return 'Bad Request', 400
     return 'OK', 200
 
@@ -227,8 +227,8 @@ def read_contents():
         path = request.form['path']
         f = open(ROOT + path, 'r')
         return f.read()
-    except: #Exception, e:
-        print('## read_contents ## Unexpected error:')# %s' % str(e)
+    except Exception as e:
+        print('## read_contents ## Unexpected error: {0}'.format(e))
         return 'Not Found', 404
 
 BOILERPLATE = """<!DOCTYPE html>
@@ -336,8 +336,8 @@ def delete_file():
     print('## Deleting file ## ' + fname)
     try:
         os.remove(ROOT + fname)
-    except: # Exception, e:
-        print('## delete_file ## Unexpected error:')# %s' % str(e)
+    except Exception as e:
+        print('## delete_file ## Unexpected error: {0}'.format(e))
         return 'Bad Request', 400
     return 'OK', 200
 
@@ -352,8 +352,8 @@ def new_folder():
     else:
         try:
             os.makedirs(path)
-        except:# Exception, e:
-            print('## new_folder ## Unexpected error:')# %s' % str(e)
+        except Exception as e:
+            print('## new_folder ## Unexpected error: {0}'.format(e))
             return 'Bad Request', 400
     return 'OK', 200
 
@@ -365,8 +365,8 @@ def delete_folder():
     print('Deleting folder: ' + fname)
     try:
         os.rmdir(ROOT + fname)
-    except:# Exception, e:
-        print('## delete_folder ## Unexpected error: ')#%s' % str(e)
+    except Exception as e:
+        print('## delete_folder ## Unexpected error: {0}'.format(e))
         return 'Bad Request', 400
     return 'OK', 200
 
@@ -408,8 +408,8 @@ def xupload_file():
             f.close()
         except RequestEntityTooLarge:
             return 'File too large', 413
-        except: #Exception, e:
-            print('## xupload_file ## Unexpected error:')# %s' % str(e)
+        except Exception as e:
+            print('## xupload_file ## Unexpected error: {0}'.format(e))
             return 'Bad request', 400
     return 'OK', 200
 
@@ -449,8 +449,8 @@ def save_prefs():
             config.set(section, k, str(v))
         with open(CONFIG_FILE, 'wb') as configfile:
             config.write(configfile)
-    except:# Exception, e:
-        print('## save_prefs ## Unexpected error:')# %s' % str(e)
+    except Exception as e:
+        print('## save_prefs ## Unexpected error: {0}'.format(e))
         return 'Bad request', 400
     return 'OK', 200
 
@@ -459,14 +459,14 @@ def save_prefs():
 @editor.route('/editor/read_prefs', methods=['POST'])
 @login_required
 def read_prefs():
-    import json, ConfigParser
+    import json, configparser
     section = request.form['section']
     types = json.loads(request.form['types'])
     defaults = json.loads(request.form['defaults'])
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
     config.read(CONFIG_FILE)
     d = {}
-    for k, v in types.iteritems():
+    for k, v in types.items():
         try:
             if v == 'int':
                 d[k] = config.getint(section, k)
@@ -476,10 +476,10 @@ def read_prefs():
                 d[k] = config.getboolean(section, k)
             else:
                 d[k] = config.get(section, k)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
+        except (configparser.NoSectionError, configparser.NoOptionError):
             d[k] = defaults[k]
-        except:# Exception, e:
-            print('## read_prefs ## Unexpected error:')# %s' % str(e)
+        except Exception as e:
+            print('## read_prefs ## Unexpected error: {0}'.format(e))
     return json.dumps(d)
 
 ## log page functions
@@ -552,8 +552,8 @@ def config():
     except ConfigParser.NoOptionError:
         editor = 'editor-cm'
         advanced = '1'
-    except:# Exception, e:
-        print('## config ## Unexpected error:')# %s' % str(e)
+    except Exception as e:
+        print('## config ## Unexpected error: {0}'.format(e))
         editor = 'editor-cm'
         advanced = '0'
     try:
@@ -586,8 +586,8 @@ def set_editor():
         config.set(section, 'editor', editor)
         with open(CONFIG_FILE, 'wb') as configfile:
             config.write(configfile)
-    except:# Exception, e:
-        print('## set_editor ## Unexpected error:')# %s' % str(e)
+    except Exception as e:
+        print('## set_editor ## Unexpected error: {0}'.format(e))
         return 'Bad request', 400
     return 'OK', 200
 
@@ -606,3 +606,4 @@ def monitor():
 
 if __name__ == '__main__':
     editor.run(host='127.0.0.1:5001', debug=True)
+
